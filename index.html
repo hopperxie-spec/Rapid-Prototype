@@ -3,23 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>快速原型预览</title>
+  <title>PRD 与原型版本索引</title>
   <style>
     :root {
       --bg: #f5f7fb;
       --card: #ffffff;
       --text: #111827;
-      --muted: #6b7280;
+      --muted: #667085;
       --border: #e5e7eb;
       --primary: #2563eb;
+      --primary-dark: #1d4ed8;
       --primary-light: #eff6ff;
+      --green: #16a34a;
+      --orange: #f97316;
       --shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
       --shadow-hover: 0 14px 34px rgba(15, 23, 42, 0.12);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -30,8 +31,10 @@
       color: var(--text);
     }
 
+    a { color: inherit; text-decoration: none; }
+
     .page {
-      max-width: 1120px;
+      max-width: 1160px;
       margin: 0 auto;
       padding: 56px 24px 72px;
     }
@@ -55,14 +58,13 @@
       background: rgba(239, 246, 255, 0.8);
       color: var(--primary);
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .title {
       margin: 0;
       font-size: 34px;
       line-height: 1.2;
-      letter-spacing: -0.02em;
     }
 
     .desc {
@@ -72,26 +74,18 @@
       line-height: 1.7;
     }
 
-    .actions {
-      flex: 0 0 auto;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
     .count {
+      flex: 0 0 auto;
       padding: 8px 12px;
       border-radius: 999px;
       background: #fff;
       border: 1px solid var(--border);
       box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+      color: var(--muted);
+      font-size: 13px;
     }
 
-    .toolbar {
-      margin: 0 0 20px;
-    }
+    .toolbar { margin: 0 0 20px; }
 
     .search {
       width: 100%;
@@ -100,7 +94,7 @@
       border-radius: 12px;
       padding: 0 14px;
       outline: none;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       color: var(--text);
       font-size: 14px;
       box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
@@ -111,90 +105,156 @@
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
     }
 
-    .grid {
+    .version-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
+      gap: 18px;
     }
 
-    .card {
-      display: flex;
-      flex-direction: column;
-      min-height: 178px;
-      padding: 20px;
+    .version-card {
       border: 1px solid var(--border);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.92);
-      text-decoration: none;
-      color: inherit;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.94);
       box-shadow: var(--shadow);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      overflow: hidden;
     }
 
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(37, 99, 235, 0.55);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 14px;
-    }
-
-    .icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+    .version-head {
       display: grid;
-      place-items: center;
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 800;
-      font-size: 16px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
     }
 
-    .tag {
-      flex: 0 0 auto;
-      display: inline-flex;
+    .version-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
       align-items: center;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: #f3f4f6;
-      color: #4b5563;
-      font-size: 12px;
+      margin-bottom: 8px;
     }
 
-    .card h2 {
-      margin: 0 0 10px;
-      font-size: 18px;
+    .version-title h2 {
+      margin: 0;
+      font-size: 21px;
       line-height: 1.35;
     }
 
-    .card p {
+    .version-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge.version { background: var(--primary-light); color: var(--primary-dark); }
+    .badge.draft { background: #ffedd5; color: #c2410c; }
+    .badge.ready { background: #dcfce7; color: #15803d; }
+
+    .version-summary {
       margin: 0;
       color: var(--muted);
       font-size: 14px;
       line-height: 1.7;
     }
 
-    .card-footer {
-      margin-top: auto;
-      padding-top: 18px;
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      color: var(--primary);
-      font-size: 13px;
-      font-weight: 600;
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 18px;
     }
 
+    .asset {
+      display: flex;
+      gap: 14px;
+      min-height: 132px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    a.asset:hover {
+      transform: translateY(-2px);
+      border-color: rgba(37, 99, 235, 0.55);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .asset.disabled {
+      background: #f8fafc;
+      color: #98a2b3;
+    }
+
+    .asset-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 13px;
+      flex: 0 0 auto;
+    }
+
+    .asset.disabled .asset-icon {
+      background: #eef2f7;
+      color: #98a2b3;
+    }
+
+    .asset-body {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .asset h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .asset p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .asset.disabled p { color: #98a2b3; }
+
+    .asset-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 14px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .asset.disabled .asset-footer { color: #98a2b3; }
+
     .path {
-      max-width: 200px;
+      max-width: 220px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -230,22 +290,14 @@
       color: #1e293b;
     }
 
-    @media (max-width: 720px) {
-      .page {
-        padding: 34px 16px 48px;
-      }
-
-      .header {
-        display: block;
-      }
-
-      .actions {
-        margin-top: 16px;
-      }
-
-      .title {
-        font-size: 28px;
-      }
+    @media (max-width: 760px) {
+      .page { padding: 34px 16px 48px; }
+      .header { display: block; }
+      .count { display: inline-flex; margin-top: 16px; }
+      .title { font-size: 28px; }
+      .version-head { grid-template-columns: 1fr; }
+      .asset-grid { grid-template-columns: 1fr; }
+      .asset { min-height: 0; }
     }
   </style>
 </head>
@@ -254,79 +306,128 @@
   <main class="page">
     <header class="header">
       <div>
-        <div class="eyebrow">HTML Prototype Preview</div>
-        <h1 class="title">快速原型预览</h1>
-        <p class="desc">用于统一管理和预览多个 HTML 原型、PRD 页面和交互 Demo。</p>
+        <div class="eyebrow">Index · PRD Versions · HTML Prototypes</div>
+        <h1 class="title">PRD 与 HTML 原型版本索引</h1>
+        <p class="desc">按版本管理 PRD 文档，并在同一版本下关联对应的 HTML 原型，便于评审、演示和归档。</p>
       </div>
-      <div class="actions">
-        <span class="count" id="prototypeCount">0 个原型</span>
-      </div>
+      <div class="count" id="versionCount">0 个版本</div>
     </header>
 
     <section class="toolbar">
-      <input class="search" id="searchInput" type="search" placeholder="搜索原型名称、说明或标签..." />
+      <input class="search" id="searchInput" type="search" placeholder="搜索版本、PRD、原型名称或关键词..." />
     </section>
 
-    <section class="grid" id="prototypeGrid">
-      <a class="card" href="./ToB_全链路效能中心_PRD.html" data-keywords="ToB 全链路 效能中心 PRD 原型">
-        <div class="card-top">
-          <div class="icon">PRD</div>
-          <span class="tag">PRD 原型</span>
-        </div>
-        <h2>ToB 全链路效能中心 PRD</h2>
-        <p>查看全链路效能中心 PRD 原型与交互页面。</p>
-        <div class="card-footer">
-          <span>打开预览 →</span>
-          <span class="path">./ToB_全链路效能中心_PRD.html</span>
-        </div>
-      </a>
+    <section class="version-list" id="versionList"></section>
 
-      <!--
-        后续新增 HTML 时，复制下面这段卡片，放到 prototypeGrid 里面即可。
-
-        示例：
-        <a class="card" href="./customer-research.html" data-keywords="客户调研中心 Web 原型">
-          <div class="card-top">
-            <div class="icon">WEB</div>
-            <span class="tag">Web 原型</span>
-          </div>
-          <h2>客户调研中心</h2>
-          <p>查看客户调研中心交互原型。</p>
-          <div class="card-footer">
-            <span>打开预览 →</span>
-            <span class="path">./customer-research.html</span>
-          </div>
-        </a>
-      -->
-    </section>
-
-    <div class="empty" id="emptyState">没有匹配的原型，请换个关键词试试。</div>
+    <div class="empty" id="emptyState">没有匹配的版本或原型，请换个关键词试试。</div>
 
     <section class="tips">
-      使用说明：把这个文件命名为 <code>index.html</code> 并上传到仓库根目录。GitHub Pages 开启后，访问仓库主页链接即可进入这个目录页。
-      后续上传新的 HTML 文件后，只需要在本页新增一个卡片入口。
+      维护方式：只需要修改页面底部脚本里的 <code>versions</code> 配置数组。新增版本时复制一个对象；对应 HTML 原型产出后，把该版本 <code>assets</code> 里的占位项改成带 <code>href</code> 的可点击项。
+      推荐文件命名：<code>项目名_V1.0_PRD.html</code>、<code>项目名_V1.0_原型.html</code>。
     </section>
   </main>
 
   <script>
-    const searchInput = document.getElementById("searchInput");
-    const grid = document.getElementById("prototypeGrid");
-    const cards = Array.from(grid.querySelectorAll(".card"));
-    const emptyState = document.getElementById("emptyState");
-    const count = document.getElementById("prototypeCount");
+    const versions = [
+      {
+        version: "V1.0",
+        title: "ToB 全链路效能中心",
+        status: "草稿 / 待评审",
+        statusType: "draft",
+        date: "2026-07-01",
+        owner: "产品经理 / ToB 系统建设组",
+        summary: "围绕客户、线索、商机、合同、项目、交付、验收、收入、售后等核心对象，建设统一的业务链路还原、效能分析、偏差检测、风险预警和治理闭环能力。",
+        keywords: "ToB 全链路 效能中心 PRD HTML 原型 草稿 待评审",
+        assets: [
+          {
+            type: "PRD",
+            title: "V1.0 PRD 文档",
+            desc: "查看需求背景、范围边界、业务流程、功能需求、数据规则、权限设计、接口集成、验收标准和上线计划。",
+            href: "./ToB_全链路效能中心_PRD.html",
+            action: "打开 PRD →"
+          },
+          {
+            type: "HTML",
+            title: "V1.0 HTML 原型",
+            desc: "当前版本尚未提供独立交互原型文件。生成后放在同一版本卡片下，作为该 PRD 的对应原型入口。",
+            path: "建议：ToB_全链路效能中心_V1.0_原型.html",
+            action: "待补充",
+            disabled: true
+          }
+        ]
+      }
+    ];
 
-    function updateCount(visibleCount) {
-      count.textContent = visibleCount + " 个原型";
+    const searchInput = document.getElementById("searchInput");
+    const versionList = document.getElementById("versionList");
+    const emptyState = document.getElementById("emptyState");
+    const count = document.getElementById("versionCount");
+    let versionCards = [];
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
-    function filterCards() {
+    function renderAsset(asset) {
+      const content = `
+        <div class="asset-icon">${escapeHtml(asset.type)}</div>
+        <div class="asset-body">
+          <h3>${escapeHtml(asset.title)}</h3>
+          <p>${escapeHtml(asset.desc)}</p>
+          <div class="asset-footer">
+            <span>${escapeHtml(asset.action)}</span>
+            <span class="path">${escapeHtml(asset.path || asset.href || "")}</span>
+          </div>
+        </div>
+      `;
+
+      if (asset.disabled) {
+        return `<div class="asset disabled" aria-disabled="true">${content}</div>`;
+      }
+
+      return `<a class="asset" href="${escapeHtml(asset.href)}">${content}</a>`;
+    }
+
+    function renderVersions() {
+      versionList.innerHTML = versions.map((item) => `
+        <article class="version-card" data-keywords="${escapeHtml([item.version, item.title, item.status, item.keywords].join(" "))}">
+          <div class="version-head">
+            <div>
+              <div class="version-title">
+                <span class="badge version">${escapeHtml(item.version)}</span>
+                <h2>${escapeHtml(item.title)}</h2>
+                <span class="badge ${escapeHtml(item.statusType || "ready")}">${escapeHtml(item.status)}</span>
+              </div>
+              <p class="version-summary">${escapeHtml(item.summary)}</p>
+            </div>
+            <div class="version-meta">
+              <span>创建日期：${escapeHtml(item.date)}</span>
+              <span>负责人：${escapeHtml(item.owner)}</span>
+            </div>
+          </div>
+          <div class="asset-grid">${item.assets.map(renderAsset).join("")}</div>
+        </article>
+      `).join("");
+      versionCards = Array.from(versionList.querySelectorAll(".version-card"));
+    }
+
+    function updateCount(visibleCount) {
+      count.textContent = visibleCount + " 个版本";
+    }
+
+    function filterVersions() {
       const keyword = searchInput.value.trim().toLowerCase();
       let visibleCount = 0;
 
-      cards.forEach((card) => {
+      versionCards.forEach((card) => {
         const text = (card.innerText + " " + (card.dataset.keywords || "")).toLowerCase();
         const matched = !keyword || text.includes(keyword);
-        card.style.display = matched ? "flex" : "none";
+        card.style.display = matched ? "block" : "none";
         if (matched) visibleCount += 1;
       });
 
@@ -334,8 +435,9 @@
       updateCount(visibleCount);
     }
 
-    searchInput.addEventListener("input", filterCards);
-    updateCount(cards.length);
+    renderVersions();
+    searchInput.addEventListener("input", filterVersions);
+    updateCount(versionCards.length);
   </script>
 </body>
 </html>

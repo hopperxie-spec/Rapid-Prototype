@@ -6,7 +6,7 @@
 
 | 文件 | 说明 |
 | --- | --- |
-| `index.html` | 快速原型预览入口页，支持原型卡片展示和关键词搜索。 |
+| `index.html` | PRD 与 HTML 原型版本目录页，支持按版本分组展示和关键词搜索。 |
 | `ToB_全链路效能中心_PRD.html` | 《ToB 全链路效能中心》PRD 页面，包含目录导航、需求概述、功能需求、数据规则、权限设计、接口集成、验收标准和上线计划等内容。 |
 
 ## 当前原型
@@ -53,37 +53,52 @@ http://localhost:8000/
 3. 选择对应分支和目录作为发布来源。
 4. 发布完成后访问 GitHub Pages 地址，即可进入 `index.html` 原型目录页。
 
+## 快速维护目录
+
+`index.html` 已改成数据驱动维护。日常只需要改页面底部脚本中的 `versions` 数组，不需要手工复制整段 HTML 卡片。
+
+### 新增一个 PRD 版本
+
+1. 复制现有 PRD HTML，按版本重命名，例如 `ToB_全链路效能中心_V1.1_PRD.html`。
+2. 在 `index.html` 的 `versions` 数组中复制一个版本对象。
+3. 修改 `version`、`status`、`date`、`summary` 和 `assets` 里的 PRD `href`。
+
+### 给某个版本补 HTML 原型
+
+1. 新增原型文件，例如 `ToB_全链路效能中心_V1.1_原型.html`。
+2. 找到该版本 `assets` 里的 `HTML` 占位项。
+3. 删除 `disabled: true`，增加 `href: "./ToB_全链路效能中心_V1.1_原型.html"`，把 `action` 改成 `打开原型 →`。
+
+### PRD 页面返回目录与打印
+
+- PRD 页面左侧的“返回目录”链接统一指向 `index.html`。
+- “浏览器打印 / 导出 PDF”按钮调用 `window.print()`，即浏览器原生打印功能，可在打印弹窗中选择保存为 PDF。
+
 ## 新增原型页面
 
-新增 HTML 原型时，建议按以下方式维护：
+如果只是新增一个 HTML 原型文件，建议按以下方式维护：
 
 1. 将新的 `.html` 文件放在当前目录。
 2. 打开 `index.html`。
-3. 复制 `prototypeGrid` 中的卡片示例。
-4. 修改卡片的 `href`、标题、说明、标签和 `data-keywords`。
+3. 找到对应版本对象的 `assets` 数组。
+4. 将 `HTML` 占位项改为带 `href` 的原型入口。
 5. 保存后刷新入口页确认能正常打开。
 
 示例：
 
 ```html
-<a class="card" href="./your-prototype.html" data-keywords="关键词 Web 原型">
-  <div class="card-top">
-    <div class="icon">WEB</div>
-    <span class="tag">Web 原型</span>
-  </div>
-  <h2>原型名称</h2>
-  <p>原型说明。</p>
-  <div class="card-footer">
-    <span>打开预览 →</span>
-    <span class="path">./your-prototype.html</span>
-  </div>
-</a>
+{
+  type: "HTML",
+  title: "V1.1 HTML 原型",
+  desc: "查看该版本对应的交互原型。",
+  href: "./ToB_全链路效能中心_V1.1_原型.html",
+  action: "打开原型 →"
+}
 ```
 
 ## 维护说明
 
 - 页面使用内联 CSS 和少量原生 JavaScript，便于单文件分发、评审和归档。
-- PRD 页面支持浏览器打印，可通过“打印 / 导出 PDF”导出评审材料。
+- PRD 页面支持浏览器打印，可通过“浏览器打印 / 导出 PDF”导出评审材料。
 - `index.html` 中的 `customer-research.html` 仅作为注释示例，当前目录未包含该文件。
 - 若文件名包含中文，部署到部分静态服务器时需确认 URL 编码和链接跳转是否正常。
-
