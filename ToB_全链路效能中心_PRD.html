@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ToB 全链路效能中心 PRD</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;--card:#fff;--text:#182033;--muted:#667085;--line:#e6eaf2;
+      --primary:#2563eb;--primary-dark:#1d4ed8;--primary-soft:#eaf1ff;
+      --green:#16a34a;--orange:#f97316;--red:#dc2626;--purple:#7c3aed;
+      --shadow:0 10px 28px rgba(16,24,40,.08);--radius:16px;
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;color:var(--text);background:linear-gradient(180deg,#edf4ff 0%,var(--bg) 320px);line-height:1.68}
+    a{color:inherit;text-decoration:none}.page-shell{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px;max-width:1500px;margin:0 auto;padding:24px}
+    .sidebar{position:sticky;top:24px;height:calc(100vh - 48px);background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;overflow:auto}
+    .brand{display:flex;align-items:center;gap:10px;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px}.brand-logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#38bdf8);color:#fff;display:grid;place-items:center;font-weight:800}.brand h1{font-size:16px;line-height:1.25;margin:0}.brand p{font-size:12px;color:var(--muted);margin:2px 0 0}.toc-title{font-size:13px;color:var(--muted);margin:18px 0 8px}.toc{display:flex;flex-direction:column;gap:4px}.toc a{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;color:#344054;font-size:14px}.toc a:hover,.toc a.active{background:var(--primary-soft);color:var(--primary-dark)}.toc-index{width:22px;height:22px;display:inline-grid;place-items:center;border-radius:7px;background:#f2f4f7;font-size:12px;color:#475467;flex-shrink:0}.toc a:hover .toc-index,.toc a.active .toc-index{background:#dbeafe;color:var(--primary-dark)}
+    .sidebar-actions{display:grid;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}.btn{border:0;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:700;font-size:14px}.btn-primary{background:var(--primary);color:#fff;box-shadow:0 8px 18px rgba(37,99,235,.22)}.btn-secondary{background:#eef2f7;color:#344054}
+    .content{min-width:0}.hero{background:radial-gradient(circle at top right,rgba(56,189,248,.24),transparent 34%),linear-gradient(135deg,#0f3e91,#1d4ed8 54%,#2563eb);color:#fff;border-radius:24px;padding:34px;box-shadow:var(--shadow);margin-bottom:22px;position:relative;overflow:hidden}.hero::after{content:"";position:absolute;right:-110px;bottom:-150px;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,.1)}.hero-kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);font-size:13px;margin-bottom:18px}.hero h2{font-size:34px;line-height:1.18;margin:0 0 10px;letter-spacing:-.04em}.hero p{margin:0;color:rgba(255,255,255,.86);max-width:920px;font-size:15px}.hero-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px;position:relative;z-index:1}.meta-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:12px 14px}.meta-card label{display:block;font-size:12px;color:rgba(255,255,255,.68);margin-bottom:4px}.meta-card div{min-height:25px;font-weight:700}
+    .section{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:26px;margin-bottom:18px;scroll-margin-top:24px}.section-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:18px}.section-title{display:flex;align-items:center;gap:12px}.section-no{width:34px;height:34px;border-radius:11px;background:var(--primary-soft);color:var(--primary-dark);display:grid;place-items:center;font-weight:800;flex-shrink:0}.section h3{margin:0;font-size:20px;letter-spacing:-.02em}.section-desc{color:var(--muted);font-size:13px;margin-top:2px}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.info-box{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fbfcff}.info-box h4{margin:0 0 8px;font-size:15px}.info-box p{margin:6px 0}.note{border-left:4px solid var(--primary);background:#f8fbff;border-radius:12px;padding:12px 14px;color:#344054;margin:12px 0}.warning{border-left-color:var(--orange);background:#fff7ed}.success{border-left-color:var(--green);background:#f0fdf4}.danger{border-left-color:var(--red);background:#fff5f5}
+    .tag-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}.tag{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#f2f4f7;color:#475467}.tag.blue{background:#dbeafe;color:#1d4ed8}.tag.green{background:#dcfce7;color:#15803d}.tag.orange{background:#ffedd5;color:#c2410c}.tag.red{background:#fee2e2;color:#b91c1c}.tag.purple{background:#ede9fe;color:#6d28d9}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff;margin:12px 0}table{width:100%;border-collapse:collapse;min-width:820px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}th{background:#f8fafc;color:#475467;font-weight:800;white-space:nowrap}tr:last-child td{border-bottom:0}.status{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}.status.todo{background:#eef2ff;color:#3730a3}.status.doing{background:#ffedd5;color:#c2410c}.status.done{background:#dcfce7;color:#15803d}.status.risk{background:#fee2e2;color:#b91c1c}.status.gray{background:#f2f4f7;color:#475467}
+    .flow-box{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:stretch;margin:12px 0}.flow-step{border:1px solid #bfdbfe;background:#eff6ff;color:#1e3a8a;border-radius:14px;padding:12px;text-align:center;font-weight:800;position:relative;min-height:64px;display:grid;place-items:center}.flow-step small{display:block;color:#667085;font-weight:500;margin-top:4px}.flow-step:not(:last-child)::after{content:"→";position:absolute;right:-16px;top:50%;transform:translateY(-50%);color:#94a3b8;font-weight:900;z-index:2}.sub-title{margin:22px 0 8px;font-size:16px}.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.metric{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.metric label{color:var(--muted);font-size:12px}.metric strong{display:block;font-size:20px;margin-top:4px}.metric span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.footer{color:var(--muted);text-align:center;padding:24px 0 40px;font-size:13px}
+    .print-note{font-size:12px;color:#667085;margin-top:8px}.section-toolbar{display:flex;gap:8px;flex-wrap:wrap}.mini-btn{border:1px solid var(--line);background:#fff;color:#475467;border-radius:9px;padding:7px 9px;cursor:pointer;font-size:12px;font-weight:700}.mini-btn:hover{background:#f8fafc}
+    @media(max-width:1100px){.page-shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto;top:0}.toc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.hero-meta,.grid-4,.grid-3,.grid-2,.metric-grid{grid-template-columns:1fr}.flow-box{grid-template-columns:1fr}.flow-step:not(:last-child)::after{content:"↓";right:50%;top:auto;bottom:-18px;transform:translateX(50%)}}
+    @media print{body{background:#fff}.page-shell{display:block;max-width:none;padding:0}.sidebar,.section-toolbar,.sidebar-actions{display:none!important}.hero,.section{box-shadow:none;break-inside:avoid}.hero{border-radius:0}.section{border-radius:0;border-left:0;border-right:0}a{color:inherit}}
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-logo">PRD</div><div><h1>全链路效能中心</h1><p>产品需求文档</p></div></div>
+      <div class="toc-title">目录导航</div>
+      <nav class="toc" id="toc">
+        <a href="#s0"><span class="toc-index">0</span>文档首页</a>
+        <a href="#s1"><span class="toc-index">1</span>需求概述</a>
+        <a href="#s2"><span class="toc-index">2</span>背景与目标</a>
+        <a href="#s3"><span class="toc-index">3</span>范围与边界</a>
+        <a href="#s4"><span class="toc-index">4</span>用户与角色</a>
+        <a href="#s5"><span class="toc-index">5</span>业务流程</a>
+        <a href="#s6"><span class="toc-index">6</span>功能需求</a>
+        <a href="#s7"><span class="toc-index">7</span>页面与交互</a>
+        <a href="#s8"><span class="toc-index">8</span>字段与数据</a>
+        <a href="#s9"><span class="toc-index">9</span>状态与规则</a>
+        <a href="#s10"><span class="toc-index">10</span>权限设计</a>
+        <a href="#s11"><span class="toc-index">11</span>接口与集成</a>
+        <a href="#s12"><span class="toc-index">12</span>通知与日志</a>
+        <a href="#s13"><span class="toc-index">13</span>验收标准</a>
+        <a href="#s14"><span class="toc-index">14</span>风险与计划</a>
+      </nav>
+      <div class="sidebar-actions">
+        <button class="btn btn-primary" onclick="window.print()">打印 / 导出 PDF</button>
+        <button class="btn btn-secondary" onclick="toggleAll()">展开/收起说明</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="s0">
+        <div class="hero-kicker">产品需求文档 · Product Requirement Document</div>
+        <h2>《ToB 全链路效能中心》产品需求文档</h2>
+        <p>围绕客户、拜访、线索、商机、合同、项目、交付、验收、收入、售后等核心对象，建设统一的业务链路还原、效能分析、流程偏差检测、风险预警和治理闭环能力，支撑 ToB 系统从“业务记录系统”升级为“全链路经营与流程治理系统”。</p>
+        <div class="hero-meta">
+          <div class="meta-card"><label>文档版本</label><div>V1.0</div></div>
+          <div class="meta-card"><label>需求负责人</label><div>产品经理 / ToB 系统建设组</div></div>
+          <div class="meta-card"><label>创建日期</label><div>2026-07-01</div></div>
+          <div class="meta-card"><label>需求状态</label><div>草稿 / 待评审</div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header"><div class="section-title"><div class="section-no">0</div><div><h3>文档信息与版本记录</h3><div class="section-desc">用于需求评审、研发设计、测试验收和上线归档。</div></div></div></div>
+        <div class="table-wrap"><table><thead><tr><th>版本</th><th>日期</th><th>修改人</th><th>变更内容</th><th>评审状态</th><th>备注</th></tr></thead><tbody>
+          <tr><td>V1.0</td><td>2026-07-01</td><td>产品经理</td><td>首次创建 PRD，覆盖需求背景、功能范围、业务流程、数据模型、权限规则、接口集成、验收标准与上线计划。</td><td><span class="status doing">待评审</span></td><td>基于 ToB 全链路效能治理设计生成。</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">0.1 术语说明</h4>
+        <div class="table-wrap"><table><thead><tr><th>术语</th><th>说明</th><th>举例</th></tr></thead><tbody>
+          <tr><td>业务链路</td><td>围绕一个客户、商机或项目，从前端销售到后端交付、收入、售后的完整业务路径。</td><td>线索 → 商机 → 合同 → 项目 → 交付 → 验收 → 收入</td></tr>
+          <tr><td>链路实例</td><td>某个具体客户、商机或项目实际形成的一条链路记录。</td><td>“XX 客户 5G 消息项目”的完整推进轨迹。</td></tr>
+          <tr><td>事件日志</td><td>系统内每一次关键业务动作形成的标准化记录，是链路还原和效能分析的数据基础。</td><td>创建线索、转商机、提交合同、项目上线、初验通过。</td></tr>
+          <tr><td>标准链路</td><td>系统预设或管理员配置的规范业务流程。</td><td>商机必须经过“合作跟进 → 合同签署中 → 签约成功”。</td></tr>
+          <tr><td>实际链路</td><td>根据事件日志还原出的真实业务流转过程。</td><td>某商机实际经历了 3 次退回、2 次补充资料后才签约。</td></tr>
+          <tr><td>流程偏差</td><td>实际链路与标准链路、节点顺序、资料要求、时限要求不一致的情况。</td><td>项目未上线却提交初验；已终验但缺少终验报告。</td></tr>
+          <tr><td>返工</td><td>同一节点或相邻节点重复退回、重复修改、重复补充材料的情况。</td><td>验收资料连续退回 3 次。</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s1">
+        <div class="section-header"><div class="section-title"><div class="section-no">1</div><div><h3>需求概述</h3><div class="section-desc">用一页说明需求是什么、解决什么问题、交付什么能力。</div></div></div></div>
+        <div class="grid-3">
+          <div class="info-box"><h4>需求名称</h4><p>ToB 全链路效能中心</p></div>
+          <div class="info-box"><h4>需求来源</h4><p>ToB 系统现代化建设 / 全链路流程治理 / 经营效能分析</p></div>
+          <div class="info-box"><h4>优先级</h4><p><span class="status risk">P0 / P1</span> 核心经营分析与流程治理能力</p></div>
+        </div>
+        <div class="note"><strong>一句话说明：</strong>通过新增“全链路效能中心”，自动沉淀 ToB 业务关键动作日志，还原客户、线索、商机、项目、交付、收入等真实业务链路，识别耗时瓶颈、流程偏差、临期超时、资料缺失和返工问题，帮助业务管理者从结果管理转向过程治理。</div>
+        <div class="tag-row"><span class="tag blue">全链路</span><span class="tag green">事件日志</span><span class="tag purple">效能分析</span><span class="tag orange">预警闭环</span><span class="tag red">偏差检测</span></div>
+        <h4 class="sub-title">1.1 建设原则</h4>
+        <div class="grid-3">
+          <div class="info-box"><h4>不增加一线填报负担</h4><p>优先基于现有业务操作自动生成事件日志，不要求用户额外维护“流程数据”。</p></div>
+          <div class="info-box"><h4>先看清，再治理</h4><p>一期重点还原链路、计算耗时、识别异常，不直接做复杂仿真和算法平台。</p></div>
+          <div class="info-box"><h4>业务可解释</h4><p>看板、预警、诊断必须能下钻到具体客户、商机、项目、人员、节点和操作记录。</p></div>
+        </div>
+      </section>
+
+      <section class="section" id="s2">
+        <div class="section-header"><div class="section-title"><div class="section-no">2</div><div><h3>需求背景与目标</h3><div class="section-desc">先讲问题，再讲目标，避免直接堆功能。</div></div></div></div>
+        <div class="grid-2">
+          <div class="info-box"><h4>2.1 现状 / 问题</h4>
+            <p>1. 线索、商机、项目、交付、收入、售后分别在不同模块维护，单个对象可查看，但缺少跨对象的完整链路视角。</p>
+            <p>2. 当前更多依赖状态字段反映进度，无法清晰判断每个阶段实际停留多久、退回几次、是否跳过关键节点。</p>
+            <p>3. 管理者想看“哪里慢、哪里堵、哪里风险高”，但现有数据多为结果型统计，过程型指标不足。</p>
+            <p>4. 临期、超时、资料缺失、状态异常等问题发现滞后，通常依赖人工排查、会议追踪和线下催办。</p>
+            <p>5. 标准流程、节点时限、必备资料、责任角色缺少统一配置入口，导致不同项目、不同部门执行口径不一致。</p>
+          </div>
+          <div class="info-box"><h4>2.2 建设目标</h4>
+            <p>1. 建立统一的业务事件日志，支撑全链路还原、耗时计算、偏差检测和审计追溯。</p>
+            <p>2. 建设全链路效能总览，按阶段、产品、区域、行业、部门、人员分析流程效率。</p>
+            <p>3. 建设链路实例追踪，支持从客户、商机、项目任一对象进入，查看完整实际流转轨迹。</p>
+            <p>4. 建设流程偏差和预警能力，自动识别跳节点、顺序异常、长期无进展、资料缺失、返工等问题。</p>
+            <p>5. 建设链路规则配置中心，沉淀标准链路、节点 SLA、必备材料、责任角色和预警规则。</p>
+          </div>
+        </div>
+        <h4 class="sub-title">2.3 建设目标与指标</h4>
+        <div class="table-wrap"><table><thead><tr><th>目标类型</th><th>目标描述</th><th>衡量指标</th><th>一期目标值</th><th>统计口径</th></tr></thead><tbody>
+          <tr><td>效率目标</td><td>减少人工统计和会议追踪成本</td><td>手工整理全链路报表耗时</td><td>下降 50% 以上</td><td>按月统计产品/运营人员报表准备时间</td></tr>
+          <tr><td>透明目标</td><td>看清关键业务对象的真实推进路径</td><td>核心对象链路覆盖率</td><td>≥ 90%</td><td>线索、商机、项目、交付、收入关键事件有日志</td></tr>
+          <tr><td>预警目标</td><td>提前发现临期、超时、资料缺失、长期无进展</td><td>风险预警识别率</td><td>≥ 85%</td><td>按规则命中的有效预警数量 / 应预警数量</td></tr>
+          <tr><td>治理目标</td><td>推进异常事项处理闭环</td><td>预警处理闭环率</td><td>≥ 80%</td><td>已关闭预警 / 已产生预警</td></tr>
+          <tr><td>质量目标</td><td>提升流程执行规范性</td><td>流程合规率</td><td>逐月提升</td><td>符合标准链路和节点规则的实例数 / 总实例数</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s3">
+        <div class="section-header"><div class="section-title"><div class="section-no">3</div><div><h3>需求范围与边界</h3><div class="section-desc">明确本期做什么、不做什么、依赖什么。</div></div></div></div>
+        <div class="grid-3">
+          <div class="info-box"><h4>本期范围</h4>
+            <p>1. 业务事件日志标准设计与关键模块埋点。</p>
+            <p>2. 链路模板、节点、SLA、必备资料、预警规则配置。</p>
+            <p>3. 全链路效能总览、链路分析、链路实例列表与详情。</p>
+            <p>4. 流程偏差检测与预警中心。</p>
+            <p>5. 消息通知、处理闭环、操作日志、导出。</p>
+          </div>
+          <div class="info-box"><h4>不在本期范围</h4>
+            <p>1. 复杂 BPMN 拖拽建模和流程仿真预测。</p>
+            <p>2. 通用流程挖掘算法平台和自定义流程查询语言。</p>
+            <p>3. RPA 自动执行、跨系统自动改数。</p>
+            <p>4. 历史多年度数据全量准确还原。</p>
+            <p>5. 移动端完整适配，仅保证核心详情可查看。</p>
+          </div>
+          <div class="info-box"><h4>前置依赖</h4>
+            <p>1. 客户、拜访、线索、商机、合同、项目、交付、收入模块关键字段明确。</p>
+            <p>2. 组织、人员、角色、数据权限可用。</p>
+            <p>3. 消息中心支持站内信/待办/邮件等通道。</p>
+            <p>4. 各模块关键动作可接入事件日志。</p>
+            <p>5. 历史数据映射规则由业务确认。</p>
+          </div>
+        </div>
+        <h4 class="sub-title">3.1 模块边界</h4>
+        <div class="table-wrap"><table><thead><tr><th>模块</th><th>本需求负责</th><th>原模块负责</th><th>说明</th></tr></thead><tbody>
+          <tr><td>客户/拜访</td><td>采集客户创建、拜访登记、客户关联等事件</td><td>客户基础信息维护、拜访记录维护</td><td>全链路效能中心不替代客户管理。</td></tr>
+          <tr><td>线索/商机</td><td>采集线索跟进、转商机、退出、商机阶段推进等事件</td><td>线索商机业务表单、状态动作、协同跟进</td><td>状态仍由原模块动作驱动。</td></tr>
+          <tr><td>项目/交付</td><td>采集立项、交付启动、上线、初验、终验、资料上传等事件</td><td>项目、合同、交付单、里程碑、任务、文档维护</td><td>链路中心展示与分析，不改变交付业务主流程。</td></tr>
+          <tr><td>收入/回款</td><td>采集收入填报、锁定、调整、确认、回款节点等事件</td><td>收入数据维护、财务口径确认</td><td>指标统计口径需与经营驾驶舱一致。</td></tr>
+          <tr><td>消息中心</td><td>定义通知触发规则和内容模板</td><td>消息发送、待办展示、已读未读</td><td>避免重复提醒，支持合并策略。</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s4">
+        <div class="section-header"><div class="section-title"><div class="section-no">4</div><div><h3>用户角色与使用场景</h3><div class="section-desc">把谁用、什么时候用、用来完成什么事讲清楚。</div></div></div></div>
+        <div class="table-wrap"><table><thead><tr><th>角色</th><th>角色说明</th><th>核心诉求</th><th>主要操作</th><th>数据范围</th><th>备注</th></tr></thead><tbody>
+          <tr><td>业务管理者</td><td>部门负责人、区域负责人、产品负责人</td><td>看清全链路效率、瓶颈和风险</td><td>查看总览、下钻分析、导出、催办</td><td>本部门/本区域/负责产品</td><td>重点使用看板和预警。</td></tr>
+          <tr><td>运营/流程治理人员</td><td>负责业务流程运营、规则管理、流程优化</td><td>发现偏差、沉淀标准、推动治理闭环</td><td>配置规则、查看偏差、分派预警、生成报告</td><td>按授权范围</td><td>可配置链路标准。</td></tr>
+          <tr><td>销售人员</td><td>负责客户、拜访、线索、商机推进</td><td>查看自己事项风险和下一步待办</td><td>查看本人链路、处理预警、补充跟进</td><td>本人/协同数据</td><td>不增加额外填报。</td></tr>
+          <tr><td>交付经理</td><td>负责项目交付、上线、验收、交付资料</td><td>查看交付节点是否超期、资料是否缺失</td><td>处理交付预警、查看链路详情、补齐资料</td><td>本人/负责项目</td><td>与交付里程碑联动。</td></tr>
+          <tr><td>财务/收入负责人</td><td>负责收入、回款、经营数据确认</td><td>识别验收到收入、回款阶段风险</td><td>查看收入节点预警、导出明细</td><td>按财务数据权限</td><td>金额字段需字段权限。</td></tr>
+          <tr><td>系统管理员</td><td>负责菜单、按钮、角色、数据权限、字典配置</td><td>保障配置可控、权限安全、系统稳定</td><td>配置权限、字典、任务、接口白名单</td><td>全量</td><td>不一定可见业务敏感数据。</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">4.1 典型使用场景</h4>
+        <div class="grid-3">
+          <div class="info-box"><h4>管理例会前</h4><p>管理者查看本月各阶段耗时、超时事项、重点风险客户和项目，直接形成会议议题。</p></div>
+          <div class="info-box"><h4>项目推进中</h4><p>交付经理从项目详情进入链路追踪，确认上线、初验、终验、收入节点是否按计划推进。</p></div>
+          <div class="info-box"><h4>流程治理复盘</h4><p>运营人员筛选多次退回、长期无进展、资料缺失项目，形成流程优化建议和责任闭环。</p></div>
+        </div>
+      </section>
+
+      <section class="section" id="s5">
+        <div class="section-header"><div class="section-title"><div class="section-no">5</div><div><h3>业务流程设计</h3><div class="section-desc">主流程、异常流程、状态流转触发点。</div></div></div></div>
+        <h4>5.1 ToB 标准业务链路</h4>
+        <div class="flow-box">
+          <div class="flow-step">客户/拜访<small>客户建档、拜访登记</small></div>
+          <div class="flow-step">线索/商机<small>线索跟进、商机推进</small></div>
+          <div class="flow-step">合同/项目<small>签约、立项、项目启动</small></div>
+          <div class="flow-step">交付/验收<small>上线、初验、终验</small></div>
+          <div class="flow-step">收入/售后<small>收入确认、回款、售后</small></div>
+        </div>
+        <h4 class="sub-title">5.2 系统治理主流程</h4>
+        <div class="flow-box">
+          <div class="flow-step">业务动作发生<small>原模块操作</small></div>
+          <div class="flow-step">生成事件日志<small>标准化留痕</small></div>
+          <div class="flow-step">还原链路实例<small>计算节点耗时</small></div>
+          <div class="flow-step">识别偏差预警<small>规则匹配</small></div>
+          <div class="flow-step">处理闭环沉淀<small>复盘与优化</small></div>
+        </div>
+        <h4 class="sub-title">5.3 事件生成流程</h4>
+        <div class="table-wrap"><table><thead><tr><th>步骤</th><th>触发动作</th><th>系统处理</th><th>输出结果</th><th>异常处理</th></tr></thead><tbody>
+          <tr><td>1</td><td>用户在原业务模块完成关键操作</td><td>原模块调用事件日志服务，传入对象、动作、状态、时间、操作人等信息。</td><td>生成业务事件日志</td><td>事件生成失败不阻断主业务，但需记录补偿任务。</td></tr>
+          <tr><td>2</td><td>事件入库</td><td>系统根据对象类型、对象 ID、客户 ID、关联商机/项目 ID 判断归属链路实例。</td><td>绑定链路实例</td><td>无法匹配时进入“待匹配事件池”。</td></tr>
+          <tr><td>3</td><td>链路计算任务执行</td><td>按事件时间排序，计算节点开始、完成、停留时长、是否超时。</td><td>更新链路实例、节点记录</td><td>重复事件按幂等规则处理。</td></tr>
+          <tr><td>4</td><td>规则引擎执行</td><td>匹配标准链路、SLA、资料要求、偏差规则、预警规则。</td><td>生成偏差记录或预警记录</td><td>规则配置异常时记录系统告警。</td></tr>
+          <tr><td>5</td><td>预警推送</td><td>根据规则发送站内信、待办、邮件或短信。</td><td>责任人收到待处理事项</td><td>发送失败支持重试和日志追踪。</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">5.4 预警处理流程</h4>
+        <div class="flow-box">
+          <div class="flow-step">预警产生</div>
+          <div class="flow-step">责任人确认</div>
+          <div class="flow-step">处理/转派/申诉</div>
+          <div class="flow-step">关闭/作废</div>
+          <div class="flow-step">原因沉淀</div>
+        </div>
+        <h4 class="sub-title">5.5 异常流程</h4>
+        <div class="table-wrap"><table><thead><tr><th>异常场景</th><th>触发条件</th><th>系统处理</th><th>用户提示</th><th>后续动作</th></tr></thead><tbody>
+          <tr><td>事件无法匹配链路</td><td>缺少 customer_id、opportunity_id、project_id 等关键关联字段</td><td>进入待匹配事件池，不参与统计</td><td>存在未匹配事件，请补充关联关系</td><td>管理员人工匹配或原模块补偿</td></tr>
+          <tr><td>链路重复生成</td><td>同一对象重复触发创建链路</td><td>按链路唯一键幂等处理</td><td>无需前端提示</td><td>记录幂等日志</td></tr>
+          <tr><td>规则配置冲突</td><td>同一适用范围存在多个启用规则</td><td>阻断规则发布</td><td>当前规则与已启用规则冲突</td><td>调整适用范围或停用旧规则</td></tr>
+          <tr><td>预警误报</td><td>业务实际不需要处理或数据补录导致</td><td>允许责任人提交申诉/作废</td><td>请填写作废原因</td><td>运营人员复核后关闭</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s6">
+        <div class="section-header"><div class="section-title"><div class="section-no">6</div><div><h3>功能需求清单</h3><div class="section-desc">按模块、页面、功能点拆分，支撑研发和测试。</div></div></div></div>
+        <h4 class="sub-title">6.1 全链路效能总览</h4>
+        <div class="metric-grid">
+          <div class="metric"><label>核心指标</label><strong>全链路平均周期</strong><span>从首个有效事件到当前/完成节点的平均耗时。</span></div>
+          <div class="metric"><label>核心指标</label><strong>阶段 SLA 达成率</strong><span>按节点标准时限计算。</span></div>
+          <div class="metric"><label>核心指标</label><strong>流程合规率</strong><span>无偏差链路实例 / 总链路实例。</span></div>
+          <div class="metric"><label>核心指标</label><strong>当前风险事项</strong><span>临期、超时、偏差、资料缺失等。</span></div>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>功能点</th><th>功能说明</th><th>规则说明</th><th>优先级</th><th>状态</th></tr></thead><tbody>
+          <tr><td>全局筛选</td><td>支持时间范围、部门、区域、行业、产品、负责人、对象类型、链路模板筛选。</td><td>默认展示当前用户权限范围内近 30 天数据；支持保存常用筛选。</td><td>P0</td><td><span class="status todo">待开发</span></td></tr>
+          <tr><td>核心指标卡</td><td>展示全链路平均周期、商机签约周期、项目交付周期、验收到收入周期、风险事项数、合规率、返工率。</td><td>指标支持同比/环比，点击可下钻明细。</td><td>P0</td><td><span class="status todo">待开发</span></td></tr>
+          <tr><td>耗时占比图</td><td>按阶段展示耗时占比，识别最耗时节点。</td><td>阶段耗时 = 节点完成时间 - 节点到达时间；未完成节点以当前时间计算。</td><td>P0</td><td><span class="status todo">待开发</span></td></tr>
+          <tr><td>全链路时间轴</td><td>按标准节点展示数量、平均耗时、超时数量、返工次数。</td><td>点击节点进入该节点实例列表。</td><td>P0</td><td><span class="status todo">待开发</span></td></tr>
+          <tr><td>效率漏斗</td><td>展示客户、拜访、线索、商机、签约、项目、验收、收入的转化情况。</td><td>每层数量按去重对象统计；转化率 = 下一层数量 / 当前层数量。</td><td>P1</td><td><span class="status todo">待开发</span></td></tr>
+          <tr><td>AI 诊断报告</td><td>生成结构化诊断：问题发现、集中范围、可能原因、建议动作、关联明细。</td><td>一期基于规则和统计生成，不做自由问答。</td><td>P1</td><td><span class="status doing">设计中</span></td></tr>
+        </tbody></table></div>
+
+        <h4 class="sub-title">6.2 链路分析</h4>
+        <div class="table-wrap"><table><thead><tr><th>分析视角</th><th>功能说明</th><th>展示内容</th><th>交互规则</th><th>优先级</th></tr></thead><tbody>
+          <tr><td>按阶段分析</td><td>分析各业务阶段耗时、超时、待办和返工情况。</td><td>阶段平均耗时、P90 耗时、超时率、积压量、返工次数。</td><td>支持按阶段下钻实例明细。</td><td>P0</td></tr>
+          <tr><td>按产品分析</td><td>分析不同 V/R/M/创新产品链路效率差异。</td><td>商机推进周期、交付周期、收入转化周期、风险数。</td><td>支持按产品层级下钻。</td><td>P1</td></tr>
+          <tr><td>按区域分析</td><td>分析省份/大区流程效率和异常分布。</td><td>区域排行、超时分布、合规率、重点风险项目。</td><td>点击区域筛选全局数据。</td><td>P1</td></tr>
+          <tr><td>按行业分析</td><td>分析互金、电物、党政、教医等行业链路表现。</td><td>行业平均周期、转化率、风险类型分布。</td><td>支持行业与产品交叉分析。</td><td>P2</td></tr>
+          <tr><td>按人员/部门分析</td><td>分析各团队事项处理效率和积压情况。</td><td>待处理数、超时数、平均处理时长、闭环率。</td><td>仅管理角色可看人员排行。</td><td>P1</td></tr>
+        </tbody></table></div>
+
+        <h4 class="sub-title">6.3 链路实例追踪</h4>
+        <div class="table-wrap"><table><thead><tr><th>功能点</th><th>入口</th><th>功能说明</th><th>规则说明</th><th>优先级</th></tr></thead><tbody>
+          <tr><td>链路实例列表</td><td>全链路效能中心 / 原模块详情页</td><td>展示客户、线索、商机、项目的链路实例，支持查询筛选。</td><td>列表仅展示当前用户数据权限范围内实例。</td><td>P0</td></tr>
+          <tr><td>链路详情</td><td>实例列表“查看链路”</td><td>展示基础信息、标准链路、实际时间轴、当前节点、风险信息、关联资料。</td><td>支持从任一节点跳转原业务详情。</td><td>P0</td></tr>
+          <tr><td>标准 vs 实际对比</td><td>链路详情</td><td>展示标准节点与实际事件的差异，如跳过、顺序异常、超时。</td><td>异常节点需以醒目标识展示。</td><td>P0</td></tr>
+          <tr><td>操作时间线</td><td>链路详情</td><td>按时间展示所有关键事件，包括操作人、动作、前后状态、备注。</td><td>支持按对象类型和动作类型筛选。</td><td>P0</td></tr>
+          <tr><td>关联材料</td><td>链路详情右侧</td><td>展示合同、交付物、验收报告、收入凭证等材料情况。</td><td>缺失材料生成资料缺失风险。</td><td>P1</td></tr>
+        </tbody></table></div>
+
+        <h4 class="sub-title">6.4 流程偏差检测</h4>
+        <div class="table-wrap"><table><thead><tr><th>偏差类型</th><th>检测规则</th><th>示例</th><th>风险等级</th><th>处理建议</th></tr></thead><tbody>
+          <tr><td>跳过节点</td><td>标准必经节点未出现对应完成事件</td><td>未完成交付启动直接进入上线</td><td><span class="status risk">严重</span></td><td>要求补齐节点记录或说明例外原因。</td></tr>
+          <tr><td>顺序异常</td><td>实际事件顺序不符合标准节点顺序</td><td>未上线先提交初验</td><td><span class="status risk">严重</span></td><td>核查业务状态，必要时回退原模块状态。</td></tr>
+          <tr><td>状态异常</td><td>对象状态与链路节点、事件事实不一致</td><td>项目已关闭但收入仍持续更新</td><td><span class="status doing">关注</span></td><td>提醒责任人确认数据口径。</td></tr>
+          <tr><td>时限超期</td><td>节点停留时长超过 SLA</td><td>商机 30 天无进展</td><td><span class="status doing">关注/紧急</span></td><td>生成预警并通知负责人。</td></tr>
+          <tr><td>资料缺失</td><td>节点完成但必要材料未上传或未通过校验</td><td>终验完成但缺少终验报告</td><td><span class="status doing">关注</span></td><td>提醒补齐材料。</td></tr>
+          <tr><td>多次返工</td><td>同一节点退回/补正次数超过阈值</td><td>验收资料退回 3 次以上</td><td><span class="status doing">关注</span></td><td>要求填写返工原因并纳入复盘。</td></tr>
+          <tr><td>责任缺失</td><td>当前节点无责任人或责任人无效</td><td>项目负责人已离职</td><td><span class="status risk">严重</span></td><td>通知管理员重新分派。</td></tr>
+        </tbody></table></div>
+
+        <h4 class="sub-title">6.5 预警中心</h4>
+        <div class="table-wrap"><table><thead><tr><th>功能点</th><th>功能说明</th><th>规则说明</th><th>优先级</th><th>状态</th></tr></thead><tbody>
+          <tr><td>预警列表</td><td>展示预警类型、对象、客户、商机/项目、责任人、等级、触发规则、持续时长、状态。</td><td>默认展示待处理和处理中预警；支持按等级排序。</td><td>P0</td><td><span class="status todo">待开发</span></td></tr>
+          <tr><td>预警处理</td><td>责任人可填写处理说明、上传材料、关联原模块处理动作。</td><td>处理后可转为“处理中”或“待复核”。</td><td>P0</td><td><span class="status todo">待开发</span></td></tr>
+          <tr><td>转派</td><td>责任人或管理员可将预警转派给其他人员。</td><td>转派需填写原因并通知新责任人。</td><td>P1</td><td><span class="status todo">待开发</span></td></tr>
+          <tr><td>关闭/作废</td><td>处理完成后关闭；误报可作废。</td><td>关闭需填写关闭原因；作废需运营/管理员复核。</td><td>P0</td><td><span class="status todo">待开发</span></td></tr>
+          <tr><td>批量催办</td><td>管理者可对多条超时预警批量催办。</td><td>批量操作需二次确认并记录日志。</td><td>P2</td><td><span class="status gray">二期</span></td></tr>
+        </tbody></table></div>
+
+        <h4 class="sub-title">6.6 链路规则配置</h4>
+        <div class="table-wrap"><table><thead><tr><th>配置项</th><th>说明</th><th>核心字段</th><th>规则说明</th><th>优先级</th></tr></thead><tbody>
+          <tr><td>链路模板</td><td>配置不同业务类型适用的标准链路。</td><td>模板名称、业务类型、适用范围、版本、状态。</td><td>同一范围同一时间仅允许一个启用模板。</td><td>P0</td></tr>
+          <tr><td>节点配置</td><td>配置节点名称、顺序、节点类型、必经/可选。</td><td>节点编码、节点名称、排序、对象类型、动作映射。</td><td>启用后被实例引用的节点不可直接删除，只能停用或发新版本。</td><td>P0</td></tr>
+          <tr><td>SLA 配置</td><td>配置节点标准时限、临期阈值、超时阈值。</td><td>SLA 小时数、临期提前量、工作日历、节假日规则。</td><td>支持自然日/工作日两种计算方式。</td><td>P0</td></tr>
+          <tr><td>材料配置</td><td>配置节点完成前应具备的必要材料。</td><td>材料名称、材料类型、是否必填、来源模块。</td><td>资料校验只提示风险，不阻断原模块操作，除非原模块已有强校验。</td><td>P1</td></tr>
+          <tr><td>预警规则</td><td>配置预警类型、等级、触发条件、通知对象。</td><td>规则名称、触发表达式、等级、通知渠道、接收人。</td><td>支持启停、复制、版本记录。</td><td>P0</td></tr>
+        </tbody></table></div>
+
+        <h4 class="sub-title">6.7 AI 诊断报告</h4>
+        <div class="note success"><strong>定位：</strong>一期 AI 诊断不是自由聊天，而是基于指标波动、异常聚类、规则命中和明细数据生成可解释的管理诊断卡片。</div>
+        <div class="table-wrap"><table><thead><tr><th>诊断模块</th><th>输出内容</th><th>生成规则</th><th>下钻能力</th></tr></thead><tbody>
+          <tr><td>问题摘要</td><td>本期最突出的 3-5 个流程问题。</td><td>按异常数量、影响金额、超时天数、环比变化排序。</td><td>点击查看问题明细。</td></tr>
+          <tr><td>集中范围</td><td>问题集中在哪些产品、区域、行业、部门、人员。</td><td>按维度聚合，识别高于平均值的异常聚集。</td><td>点击维度自动筛选看板。</td></tr>
+          <tr><td>可能原因</td><td>结合返工、资料缺失、退回原因、无进展天数推断原因。</td><td>基于规则模板生成，不做不可解释判断。</td><td>展示证据数据。</td></tr>
+          <tr><td>建议动作</td><td>给出催办、补资料、复盘、规则调整、专项治理等建议。</td><td>按问题类型匹配建议模板。</td><td>可一键生成治理任务。</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s7">
+        <div class="section-header"><div class="section-title"><div class="section-no">7</div><div><h3>页面与交互说明</h3><div class="section-desc">入口、布局、操作、提示和边界。</div></div></div></div>
+        <h4 class="sub-title">7.1 菜单与入口</h4>
+        <div class="table-wrap"><table><thead><tr><th>入口</th><th>路径</th><th>适用用户</th><th>说明</th></tr></thead><tbody>
+          <tr><td>一级菜单</td><td>经营分析 / 全链路效能中心</td><td>管理者、运营、管理员</td><td>进入总览、分析、预警、配置。</td></tr>
+          <tr><td>客户详情入口</td><td>客户详情页 / 查看全链路</td><td>客户相关人员</td><td>查看该客户下所有线索、商机、项目链路。</td></tr>
+          <tr><td>商机详情入口</td><td>商机详情页 / 链路追踪</td><td>销售、管理者</td><td>查看该商机从线索到项目的流转。</td></tr>
+          <tr><td>项目详情入口</td><td>项目详情页 / 链路追踪</td><td>项目经理、交付经理</td><td>查看立项、交付、验收、收入链路。</td></tr>
+          <tr><td>工作台入口</td><td>个人工作台 / 我的预警</td><td>所有责任人</td><td>处理本人待办预警。</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">7.2 页面结构</h4>
+        <div class="grid-2">
+          <div class="info-box"><h4>全链路效能总览</h4><p>顶部筛选区 + 核心指标卡 + 全链路时间轴 + 耗时占比 + 效率漏斗 + 风险分布 + AI 诊断报告 + 明细下钻。</p></div>
+          <div class="info-box"><h4>链路实例详情</h4><p>顶部对象摘要 + 左侧标准链路 + 中间实际时间线 + 右侧风险卡片/材料/关联审批 + 底部事件日志。</p></div>
+          <div class="info-box"><h4>预警中心</h4><p>顶部统计 + 筛选区 + 预警列表 + 处理抽屉 + 操作日志 + 批量导出。</p></div>
+          <div class="info-box"><h4>规则配置</h4><p>链路模板列表 + 节点配置抽屉 + SLA/材料/预警规则配置 + 版本记录。</p></div>
+        </div>
+        <h4 class="sub-title">7.3 关键交互规则</h4>
+        <div class="table-wrap"><table><thead><tr><th>交互场景</th><th>规则说明</th><th>提示文案</th></tr></thead><tbody>
+          <tr><td>看板下钻</td><td>点击指标、图表、时间轴节点后，带入当前筛选条件进入明细列表。</td><td>已按“节点=项目上线、风险=超时”筛选明细。</td></tr>
+          <tr><td>预警处理</td><td>点击处理后打开抽屉，展示预警原因、触发规则、关联对象、处理记录。</td><td>请填写处理说明，处理完成后可提交关闭。</td></tr>
+          <tr><td>关闭预警</td><td>必须填写关闭原因；严重预警需管理员或运营人员复核。</td><td>是否确认关闭该预警？关闭后将记录处理结果。</td></tr>
+          <tr><td>规则发布</td><td>新增或修改规则后需点击发布才生效；发布前校验冲突。</td><td>规则发布后将影响新生成及后续计算的链路实例。</td></tr>
+          <tr><td>导出</td><td>支持导出当前筛选条件下的指标明细、预警明细、链路事件日志。</td><td>导出任务已提交，可在下载中心查看。</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s8">
+        <div class="section-header"><div class="section-title"><div class="section-no">8</div><div><h3>字段与数据规则</h3><div class="section-desc">字段表要写到研发能建表、测试能验证、业务能确认。</div></div></div></div>
+        <h4 class="sub-title">8.1 核心数据模型</h4>
+        <div class="table-wrap"><table><thead><tr><th>表名</th><th>中文名称</th><th>用途</th><th>主键/唯一键</th><th>备注</th></tr></thead><tbody>
+          <tr><td>tob_chain_event_log</td><td>业务事件日志表</td><td>记录关键业务动作，是链路还原的数据基础。</td><td>event_id；biz_unique_key</td><td>必须支持幂等。</td></tr>
+          <tr><td>tob_chain_instance</td><td>链路实例表</td><td>记录一条业务链路的整体状态、当前节点、总耗时、风险状态。</td><td>instance_id；chain_key</td><td>可由客户/商机/项目维度生成。</td></tr>
+          <tr><td>tob_chain_node_record</td><td>链路节点记录表</td><td>记录每个节点的开始、完成、耗时、是否超时、责任人。</td><td>record_id</td><td>支持节点明细统计。</td></tr>
+          <tr><td>tob_chain_template</td><td>链路模板表</td><td>配置标准链路模板。</td><td>template_id</td><td>支持版本。</td></tr>
+          <tr><td>tob_chain_template_node</td><td>链路模板节点表</td><td>配置节点顺序、SLA、责任角色、动作映射。</td><td>node_id</td><td>模板子表。</td></tr>
+          <tr><td>tob_chain_warning</td><td>预警记录表</td><td>记录临期、超时、偏差、资料缺失等预警。</td><td>warning_id</td><td>支持处理闭环。</td></tr>
+          <tr><td>tob_chain_deviation</td><td>偏差记录表</td><td>记录实际链路与标准链路的偏差。</td><td>deviation_id</td><td>与预警可关联。</td></tr>
+          <tr><td>tob_chain_diagnosis_report</td><td>诊断报告表</td><td>沉淀 AI/规则诊断报告。</td><td>report_id</td><td>支持按周期生成。</td></tr>
+        </tbody></table></div>
+
+        <h4 class="sub-title">8.2 业务事件日志表字段</h4>
+        <div class="table-wrap"><table><thead><tr><th>字段名称</th><th>字段标识</th><th>字段类型</th><th>是否必填</th><th>取值/字典</th><th>校验规则</th><th>说明</th></tr></thead><tbody>
+          <tr><td>事件ID</td><td>event_id</td><td>varchar(64)</td><td>是</td><td>-</td><td>全局唯一</td><td>系统生成。</td></tr>
+          <tr><td>业务唯一键</td><td>biz_unique_key</td><td>varchar(128)</td><td>是</td><td>-</td><td>同一来源系统不可重复</td><td>用于防重复写入。</td></tr>
+          <tr><td>对象类型</td><td>object_type</td><td>varchar(32)</td><td>是</td><td>客户、拜访、线索、商机、合同、项目、交付、验收、收入、售后</td><td>字典校验</td><td>标识事件来源对象。</td></tr>
+          <tr><td>对象ID</td><td>object_id</td><td>varchar(64)</td><td>是</td><td>-</td><td>不为空</td><td>原业务对象主键。</td></tr>
+          <tr><td>客户ID</td><td>customer_id</td><td>varchar(64)</td><td>否</td><td>-</td><td>有关联客户时必填</td><td>用于客户维度归集。</td></tr>
+          <tr><td>线索ID</td><td>lead_id</td><td>varchar(64)</td><td>否</td><td>-</td><td>-</td><td>用于线索链路归集。</td></tr>
+          <tr><td>商机ID</td><td>opportunity_id</td><td>varchar(64)</td><td>否</td><td>-</td><td>-</td><td>用于商机链路归集。</td></tr>
+          <tr><td>项目ID</td><td>project_id</td><td>varchar(64)</td><td>否</td><td>-</td><td>-</td><td>用于项目链路归集。</td></tr>
+          <tr><td>动作类型</td><td>action_type</td><td>varchar(32)</td><td>是</td><td>创建、保存、提交、跟进、转化、退回、关闭、完成、上传、确认、更新</td><td>字典校验</td><td>关键业务动作。</td></tr>
+          <tr><td>操作前状态</td><td>from_status</td><td>varchar(64)</td><td>否</td><td>原模块状态</td><td>-</td><td>用于状态追踪。</td></tr>
+          <tr><td>操作后状态</td><td>to_status</td><td>varchar(64)</td><td>否</td><td>原模块状态</td><td>-</td><td>用于状态追踪。</td></tr>
+          <tr><td>节点编码</td><td>node_code</td><td>varchar(64)</td><td>否</td><td>链路节点字典</td><td>能映射时填写</td><td>用于节点计算。</td></tr>
+          <tr><td>操作人</td><td>operator_id</td><td>varchar(64)</td><td>是</td><td>组织人员</td><td>有效用户</td><td>用于责任与审计。</td></tr>
+          <tr><td>操作部门</td><td>operator_dept_id</td><td>varchar(64)</td><td>否</td><td>组织部门</td><td>-</td><td>用于部门统计。</td></tr>
+          <tr><td>事件时间</td><td>event_time</td><td>datetime</td><td>是</td><td>-</td><td>不可晚于当前时间过多</td><td>链路排序依据。</td></tr>
+          <tr><td>来源模块</td><td>source_module</td><td>varchar(64)</td><td>是</td><td>模块编码</td><td>字典校验</td><td>如 lead、opportunity、project。</td></tr>
+          <tr><td>事件扩展信息</td><td>event_payload</td><td>json</td><td>否</td><td>-</td><td>JSON 格式</td><td>记录金额、产品、区域、行业等扩展字段。</td></tr>
+        </tbody></table></div>
+
+        <h4 class="sub-title">8.3 链路实例表字段</h4>
+        <div class="table-wrap"><table><thead><tr><th>字段名称</th><th>字段标识</th><th>字段类型</th><th>是否必填</th><th>说明</th></tr></thead><tbody>
+          <tr><td>实例ID</td><td>instance_id</td><td>varchar(64)</td><td>是</td><td>链路实例主键。</td></tr>
+          <tr><td>链路模板ID</td><td>template_id</td><td>varchar(64)</td><td>是</td><td>适用的标准链路模板。</td></tr>
+          <tr><td>链路唯一键</td><td>chain_key</td><td>varchar(128)</td><td>是</td><td>根据客户/商机/项目生成，防止重复。</td></tr>
+          <tr><td>客户ID/名称</td><td>customer_id/customer_name</td><td>varchar</td><td>否</td><td>客户维度展示。</td></tr>
+          <tr><td>商机ID/名称</td><td>opportunity_id/opportunity_name</td><td>varchar</td><td>否</td><td>商机维度展示。</td></tr>
+          <tr><td>项目ID/名称</td><td>project_id/project_name</td><td>varchar</td><td>否</td><td>项目维度展示。</td></tr>
+          <tr><td>当前节点</td><td>current_node_code</td><td>varchar(64)</td><td>否</td><td>按最近有效事件计算。</td></tr>
+          <tr><td>当前状态</td><td>instance_status</td><td>varchar(32)</td><td>是</td><td>未开始、进行中、已完成、已中止、异常。</td></tr>
+          <tr><td>开始时间</td><td>start_time</td><td>datetime</td><td>否</td><td>首个有效事件时间。</td></tr>
+          <tr><td>结束时间</td><td>end_time</td><td>datetime</td><td>否</td><td>完成或中止时间。</td></tr>
+          <tr><td>总耗时</td><td>total_duration_hours</td><td>decimal</td><td>否</td><td>结束时间或当前时间 - 开始时间。</td></tr>
+          <tr><td>风险状态</td><td>risk_status</td><td>varchar(32)</td><td>是</td><td>正常、需关注、超时、异常。</td></tr>
+          <tr><td>责任人</td><td>owner_id</td><td>varchar(64)</td><td>否</td><td>当前节点责任人。</td></tr>
+        </tbody></table></div>
+
+        <h4 class="sub-title">8.4 指标口径</h4>
+        <div class="table-wrap"><table><thead><tr><th>指标</th><th>计算公式</th><th>统计说明</th><th>备注</th></tr></thead><tbody>
+          <tr><td>全链路平均周期</td><td>Σ链路实例总耗时 / 链路实例数</td><td>已完成实例按结束时间计算，进行中实例按当前时间计算。</td><td>支持自然日/工作日。</td></tr>
+          <tr><td>阶段平均耗时</td><td>Σ节点停留时长 / 到达该节点实例数</td><td>节点未完成时以当前时间计算。</td><td>可展示 P50/P90。</td></tr>
+          <tr><td>阶段 SLA 达成率</td><td>SLA 内完成节点数 / 已完成节点数</td><td>仅统计已完成节点。</td><td>分节点、分部门统计。</td></tr>
+          <tr><td>流程合规率</td><td>无严重偏差实例数 / 总实例数</td><td>严重偏差包括跳必经节点、顺序异常、责任缺失等。</td><td>规则可配置。</td></tr>
+          <tr><td>返工率</td><td>发生返工实例数 / 总实例数</td><td>退回/重复补正超过阈值算返工。</td><td>阈值默认 2 次。</td></tr>
+          <tr><td>漏斗转化率</td><td>下一层对象数量 / 当前层对象数量</td><td>按筛选范围内对象去重。</td><td>需明确对象关联关系。</td></tr>
+          <tr><td>预警闭环率</td><td>已关闭预警数 / 产生预警数</td><td>按预警生成时间统计。</td><td>作废预警可单独统计。</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s9">
+        <div class="section-header"><div class="section-title"><div class="section-no">9</div><div><h3>状态流转与业务规则</h3><div class="section-desc">状态通过业务动作、事件和规则自动驱动。</div></div></div></div>
+        <h4 class="sub-title">9.1 链路实例状态</h4>
+        <div class="table-wrap"><table><thead><tr><th>当前状态</th><th>触发动作/条件</th><th>目标状态</th><th>前置条件</th><th>处理规则</th><th>是否通知</th></tr></thead><tbody>
+          <tr><td>未开始</td><td>首个有效事件生成</td><td>进行中</td><td>事件匹配到链路模板</td><td>创建链路实例并初始化首个节点</td><td>否</td></tr>
+          <tr><td>进行中</td><td>到达结束节点并完成</td><td>已完成</td><td>完成节点满足标准链路结束条件</td><td>写入 end_time，计算 total_duration</td><td>可选</td></tr>
+          <tr><td>进行中</td><td>原业务对象关闭/退出/作废</td><td>已中止</td><td>事件动作=关闭/退出/作废</td><td>停止后续 SLA 计算，但保留历史链路</td><td>是</td></tr>
+          <tr><td>进行中</td><td>命中严重偏差且未处理</td><td>异常</td><td>偏差规则等级=严重</td><td>风险状态置为异常，生成预警</td><td>是</td></tr>
+          <tr><td>异常</td><td>预警处理完成且偏差解除</td><td>进行中/已完成</td><td>责任人处理并通过复核</td><td>根据当前节点重新计算状态</td><td>是</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">9.2 节点状态</h4>
+        <div class="table-wrap"><table><thead><tr><th>节点状态</th><th>说明</th><th>触发条件</th><th>展示规则</th></tr></thead><tbody>
+          <tr><td>未到达</td><td>标准链路中存在，但实际还未发生对应事件。</td><td>前序节点未完成。</td><td>灰色展示。</td></tr>
+          <tr><td>进行中</td><td>已到达但未完成。</td><td>发生节点开始事件，未发生完成事件。</td><td>蓝色展示，计算当前停留时长。</td></tr>
+          <tr><td>已完成</td><td>节点正常完成。</td><td>发生节点完成事件。</td><td>绿色展示，展示耗时。</td></tr>
+          <tr><td>超时</td><td>节点停留时长超过 SLA。</td><td>当前时间/完成时间 - 开始时间 > SLA。</td><td>橙色或红色展示。</td></tr>
+          <tr><td>跳过</td><td>必经节点未发生，但后续节点已发生。</td><td>后序节点完成且本节点无事件。</td><td>红色展示，生成偏差。</td></tr>
+          <tr><td>异常</td><td>节点存在顺序、状态、资料、责任异常。</td><td>命中偏差规则。</td><td>红色展示，显示异常原因。</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">9.3 预警状态</h4>
+        <div class="table-wrap"><table><thead><tr><th>当前状态</th><th>触发动作</th><th>目标状态</th><th>操作权限</th><th>规则说明</th></tr></thead><tbody>
+          <tr><td>待处理</td><td>责任人点击处理</td><td>处理中</td><td>责任人/管理员</td><td>需填写处理说明，可关联原模块处理动作。</td></tr>
+          <tr><td>待处理/处理中</td><td>转派</td><td>待处理</td><td>责任人/管理员/运营人员</td><td>转派后责任人变更，原责任人保留记录。</td></tr>
+          <tr><td>处理中</td><td>提交关闭</td><td>待复核/已关闭</td><td>责任人</td><td>一般预警可直接关闭；严重预警进入待复核。</td></tr>
+          <tr><td>待复核</td><td>复核通过</td><td>已关闭</td><td>运营人员/管理员</td><td>关闭后不再提醒。</td></tr>
+          <tr><td>待复核</td><td>复核不通过</td><td>处理中</td><td>运营人员/管理员</td><td>退回责任人继续处理。</td></tr>
+          <tr><td>待处理/处理中</td><td>作废申请通过</td><td>已作废</td><td>运营人员/管理员</td><td>误报、规则变更、历史数据异常可作废。</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">9.4 业务规则补充</h4>
+        <div class="note"><strong>状态不可手动修改：</strong>链路实例、节点、预警状态原则上不允许前端直接编辑，只能由业务动作、事件日志、规则计算和处理动作驱动。</div>
+        <div class="note"><strong>事件幂等：</strong>同一来源模块、同一业务对象、同一动作、同一操作时间、同一业务唯一键只能生成一条有效事件。</div>
+        <div class="note"><strong>历史回算：</strong>上线前可选择近 6-12 个月历史数据进行一次性回算；历史事件缺失导致的偏差不纳入正式考核，仅用于参考分析。</div>
+      </section>
+
+      <section class="section" id="s10">
+        <div class="section-header"><div class="section-title"><div class="section-no">10</div><div><h3>权限设计</h3><div class="section-desc">按菜单权限、按钮权限、数据权限、字段权限、配置权限说明。</div></div></div></div>
+        <h4 class="sub-title">10.1 权限类型</h4>
+        <div class="table-wrap"><table><thead><tr><th>权限类型</th><th>权限对象</th><th>控制方式</th><th>适用角色</th><th>规则说明</th><th>无权限表现</th></tr></thead><tbody>
+          <tr><td>菜单权限</td><td>全链路效能中心、预警中心、规则配置</td><td>角色-菜单授权</td><td>管理者、运营、管理员</td><td>有菜单权限才可进入对应页面。</td><td>菜单不展示。</td></tr>
+          <tr><td>按钮权限</td><td>导出、处理、转派、关闭、作废、发布规则</td><td>角色-按钮授权</td><td>按角色配置</td><td>按钮展示需同时满足按钮权限、数据权限、状态条件。</td><td>隐藏或置灰并说明原因。</td></tr>
+          <tr><td>数据权限</td><td>看板、列表、详情、导出</td><td>本人/部门/区域/产品/全量</td><td>所有角色</td><td>仅可查看授权范围内链路和预警。</td><td>无数据或提示暂无权限。</td></tr>
+          <tr><td>字段权限</td><td>金额、收入、客户敏感信息、人员排行</td><td>可见/脱敏/不可见</td><td>财务、管理者、管理员</td><td>敏感字段按角色控制。</td><td>展示“***”或不展示字段。</td></tr>
+          <tr><td>配置权限</td><td>链路模板、节点 SLA、预警规则</td><td>配置角色授权</td><td>运营人员、系统管理员</td><td>启用配置需记录版本和操作日志。</td><td>配置入口不展示。</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">10.2 角色权限矩阵</h4>
+        <div class="table-wrap"><table><thead><tr><th>功能/角色</th><th>业务管理者</th><th>运营/治理人员</th><th>销售人员</th><th>交付经理</th><th>财务/收入负责人</th><th>系统管理员</th></tr></thead><tbody>
+          <tr><td>全链路总览</td><td>查看</td><td>查看</td><td>本人数据</td><td>本人项目</td><td>收入相关</td><td>可配置但默认不看敏感金额</td></tr>
+          <tr><td>链路分析</td><td>查看/导出</td><td>查看/导出</td><td>本人数据</td><td>本人项目</td><td>收入相关</td><td>配置权限</td></tr>
+          <tr><td>链路详情</td><td>授权范围查看</td><td>授权范围查看</td><td>本人/协同查看</td><td>本人/协同项目查看</td><td>收入相关查看</td><td>按数据权限</td></tr>
+          <tr><td>预警处理</td><td>催办/查看</td><td>处理/转派/关闭/作废</td><td>本人预警处理</td><td>本人预警处理</td><td>本人预警处理</td><td>转派/作废/配置</td></tr>
+          <tr><td>规则配置</td><td>查看</td><td>新增/编辑/发布</td><td>无</td><td>无</td><td>查看收入相关规则</td><td>新增/编辑/发布</td></tr>
+          <tr><td>数据导出</td><td>授权范围导出</td><td>授权范围导出</td><td>本人数据导出</td><td>本人项目导出</td><td>收入相关导出</td><td>按授权导出</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s11">
+        <div class="section-header"><div class="section-title"><div class="section-no">11</div><div><h3>接口、数据同步与系统集成</h3><div class="section-desc">涉及原业务模块、消息平台、组织权限、低代码看板时需单独列示。</div></div></div></div>
+        <h4 class="sub-title">11.1 事件接入接口</h4>
+        <div class="table-wrap"><table><thead><tr><th>接口名称</th><th>接口方向</th><th>调用时机</th><th>核心入参</th><th>核心出参</th><th>异常处理</th><th>负责人</th></tr></thead><tbody>
+          <tr><td>写入业务事件日志</td><td>原业务模块 → 全链路中心</td><td>关键业务动作成功后</td><td>object_type、object_id、action_type、from_status、to_status、operator_id、event_time、payload</td><td>event_id、处理结果</td><td>失败写入补偿队列，不阻断主业务</td><td>各模块研发</td></tr>
+          <tr><td>批量补偿事件</td><td>原业务模块/定时任务 → 全链路中心</td><td>补偿失败事件或历史回算</td><td>事件列表、批次号</td><td>成功数、失败数、失败原因</td><td>失败明细可下载</td><td>数据研发</td></tr>
+          <tr><td>查询链路实例</td><td>原业务模块 → 全链路中心</td><td>详情页展示链路入口</td><td>object_type、object_id、user_id</td><td>instance_id、current_node、risk_status</td><td>无实例时返回空</td><td>链路中心研发</td></tr>
+          <tr><td>查询链路详情</td><td>前端 → 全链路中心</td><td>用户打开链路详情</td><td>instance_id、user_id</td><td>实例信息、节点记录、事件列表、预警列表</td><td>无权限返回 403</td><td>链路中心研发</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">11.2 模块事件清单</h4>
+        <div class="table-wrap"><table><thead><tr><th>来源模块</th><th>关键事件</th><th>动作类型</th><th>节点映射</th><th>备注</th></tr></thead><tbody>
+          <tr><td>客户管理</td><td>客户创建、客户更新、客户归属变更</td><td>创建/更新/变更</td><td>客户建档</td><td>客户归属影响数据权限。</td></tr>
+          <tr><td>拜访管理</td><td>拜访登记、拜访完成</td><td>创建/完成</td><td>客户拜访</td><td>可用于线索前置触点分析。</td></tr>
+          <tr><td>线索管理</td><td>线索创建、线索跟进、线索退出、恢复、转商机</td><td>创建/跟进/退出/恢复/转化</td><td>线索跟进、转商机</td><td>转商机成功后更新链路对象关系。</td></tr>
+          <tr><td>商机管理</td><td>商机创建、提交、跟进、退回、关闭、签约、转项目</td><td>创建/提交/跟进/退回/关闭/转化</td><td>商机推进、合同签署、转项目</td><td>商机草稿不改变线索状态，但可记录草稿事件。</td></tr>
+          <tr><td>项目管理</td><td>项目创建、立项、状态变更、项目关闭</td><td>创建/提交/更新/关闭</td><td>项目立项、项目推进</td><td>项目由商机转入时继承商机链路。</td></tr>
+          <tr><td>交付管理</td><td>交付启动、节点完成、上线、初验、试运行、终验</td><td>开始/完成/确认</td><td>交付启动、上线、初验、终验</td><td>与里程碑任务联动。</td></tr>
+          <tr><td>收入管理</td><td>收入填报、提交、锁定、调整、确认</td><td>创建/提交/锁定/更新/确认</td><td>收入确认</td><td>金额字段需字段权限。</td></tr>
+          <tr><td>售后管理</td><td>售后项目创建、问题处理、关闭</td><td>创建/处理/关闭</td><td>售后跟进</td><td>二期纳入深度分析。</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">11.3 外部与基础能力集成</h4>
+        <div class="table-wrap"><table><thead><tr><th>系统/能力</th><th>集成内容</th><th>调用方向</th><th>说明</th></tr></thead><tbody>
+          <tr><td>组织权限中心</td><td>用户、部门、角色、组织层级</td><td>全链路中心 → 组织权限中心</td><td>用于数据权限、责任人识别、通知对象。</td></tr>
+          <tr><td>消息中心</td><td>站内信、待办、邮件、短信</td><td>全链路中心 → 消息中心</td><td>用于预警提醒、转派、复核、关闭通知。</td></tr>
+          <tr><td>低代码看板</td><td>指标数据接口、明细接口</td><td>低代码看板 → 全链路中心</td><td>如经营大屏需复用全链路指标。</td></tr>
+          <tr><td>下载中心</td><td>异步导出文件</td><td>全链路中心 → 下载中心</td><td>大批量导出采用异步任务。</td></tr>
+          <tr><td>日志审计平台</td><td>操作日志、接口日志、异常日志</td><td>全链路中心 → 日志平台</td><td>满足审计和问题排查。</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s12">
+        <div class="section-header"><div class="section-title"><div class="section-no">12</div><div><h3>消息通知、操作日志与审计</h3><div class="section-desc">关键操作要有消息触达与日志留痕。</div></div></div></div>
+        <div class="grid-2">
+          <div class="info-box"><h4>12.1 消息通知规则</h4>
+            <div class="table-wrap"><table style="min-width:620px"><thead><tr><th>触发事件</th><th>通知对象</th><th>通知渠道</th><th>通知内容</th><th>频率控制</th></tr></thead><tbody>
+              <tr><td>临期预警</td><td>当前节点责任人</td><td>站内信/待办</td><td>您负责的【对象名称】即将超期，请及时处理。</td><td>每天最多 1 次</td></tr>
+              <tr><td>超时预警</td><td>责任人、直属管理人</td><td>站内信/待办/邮件</td><td>您负责的【对象名称】已超时【X】天，请尽快处理。</td><td>首次立即提醒，之后每 2 天 1 次</td></tr>
+              <tr><td>严重偏差</td><td>责任人、运营人员、管理员</td><td>站内信/邮件</td><td>【对象名称】存在严重流程偏差：【偏差原因】。</td><td>立即提醒</td></tr>
+              <tr><td>预警转派</td><td>新责任人、原责任人</td><td>站内信</td><td>预警【预警编号】已转派给【新责任人】。</td><td>每次转派提醒</td></tr>
+              <tr><td>关闭复核</td><td>运营人员/管理员</td><td>待办</td><td>有一条严重预警待复核关闭。</td><td>即时提醒</td></tr>
+            </tbody></table></div>
+          </div>
+          <div class="info-box"><h4>12.2 操作日志规则</h4>
+            <p>需记录操作人、操作时间、操作 IP、操作类型、对象类型、对象 ID、操作前后状态、关键字段变更、失败原因。</p>
+            <p>关键操作包括：规则新增、规则修改、规则发布、规则停用、预警处理、预警转派、预警关闭、预警作废、数据导出、历史回算、权限变更。</p>
+            <p>日志保存时间建议不少于 3 年，满足问题追溯和审计要求。</p>
+          </div>
+        </div>
+        <h4 class="sub-title">12.3 事件日志与审计日志区别</h4>
+        <div class="table-wrap"><table><thead><tr><th>类型</th><th>记录对象</th><th>主要用途</th><th>是否面向业务展示</th></tr></thead><tbody>
+          <tr><td>业务事件日志</td><td>客户、线索、商机、项目、交付、收入等业务动作</td><td>链路还原、耗时计算、偏差检测、看板统计</td><td>链路详情中展示</td></tr>
+          <tr><td>操作审计日志</td><td>用户对链路中心配置、预警、导出等操作</td><td>安全审计、责任追溯、问题排查</td><td>管理员可查询</td></tr>
+          <tr><td>接口日志</td><td>系统接口调用、同步任务、失败重试</td><td>技术排障、补偿处理</td><td>研发/管理员可查询</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="s13">
+        <div class="section-header"><div class="section-title"><div class="section-no">13</div><div><h3>验收标准</h3><div class="section-desc">验收标准要可测试、可判断。</div></div></div></div>
+        <div class="table-wrap"><table><thead><tr><th>验收类型</th><th>验收项</th><th>验收标准</th><th>优先级</th></tr></thead><tbody>
+          <tr><td>功能验收</td><td>全链路总览</td><td>核心指标、时间轴、耗时占比、效率漏斗、风险分布可正常展示，筛选和下钻正确。</td><td>P0</td></tr>
+          <tr><td>功能验收</td><td>链路实例追踪</td><td>从客户/商机/项目详情可进入链路详情，展示标准链路、实际事件、节点耗时、预警和材料。</td><td>P0</td></tr>
+          <tr><td>功能验收</td><td>预警中心</td><td>预警可生成、查看、处理、转派、关闭、作废，状态流转和日志完整。</td><td>P0</td></tr>
+          <tr><td>功能验收</td><td>规则配置</td><td>链路模板、节点、SLA、材料、预警规则可新增、编辑、发布、停用和查看版本。</td><td>P0</td></tr>
+          <tr><td>数据验收</td><td>事件日志</td><td>关键业务动作均能生成事件日志，事件字段完整，幂等规则有效。</td><td>P0</td></tr>
+          <tr><td>数据验收</td><td>指标口径</td><td>全链路周期、阶段耗时、SLA 达成率、合规率、返工率计算与口径一致。</td><td>P0</td></tr>
+          <tr><td>权限验收</td><td>菜单/按钮/数据/字段权限</td><td>不同角色只能查看和操作授权范围内的数据和按钮，敏感字段按权限脱敏。</td><td>P0</td></tr>
+          <tr><td>性能验收</td><td>页面响应</td><td>常规筛选查询 3 秒内返回；大数据导出走异步任务；看板聚合支持缓存。</td><td>P1</td></tr>
+          <tr><td>异常验收</td><td>接口失败与补偿</td><td>事件写入失败不阻断原业务，失败事件进入补偿队列并可重试。</td><td>P0</td></tr>
+          <tr><td>上线验收</td><td>生产配置</td><td>菜单、按钮、角色、数据权限、字典、规则、定时任务、消息模板、接口白名单均完成配置并验证。</td><td>P0</td></tr>
+        </tbody></table></div>
+        <div class="note success"><strong>验收口径：</strong>验收时需选取不少于 3 条完整业务链路样例，覆盖“正常推进、超时预警、流程偏差、资料缺失、转派关闭”等典型场景。</div>
+      </section>
+
+      <section class="section" id="s14">
+        <div class="section-header"><div class="section-title"><div class="section-no">14</div><div><h3>风险、依赖与上线计划</h3><div class="section-desc">上线前明确依赖、配置、数据迁移、回退方案。</div></div></div></div>
+        <div class="grid-2">
+          <div class="info-box"><h4>14.1 风险与应对</h4>
+            <div class="table-wrap"><table style="min-width:620px"><thead><tr><th>风险项</th><th>影响</th><th>应对措施</th><th>责任人</th></tr></thead><tbody>
+              <tr><td>历史数据不完整</td><td>导致历史链路还原不准确</td><td>一期历史数据仅做参考，不纳入正式考核；明确回算范围和缺失标识。</td><td>产品/数据研发</td></tr>
+              <tr><td>对象关联关系复杂</td><td>客户、线索、商机、项目无法准确串联</td><td>设计链路匹配规则和待匹配事件池，人工确认关键异常。</td><td>产品/研发/业务</td></tr>
+              <tr><td>事件埋点遗漏</td><td>指标不准确、节点缺失</td><td>制定事件清单，按模块验收；上线后监控事件覆盖率。</td><td>各模块研发</td></tr>
+              <tr><td>规则误报</td><td>影响用户信任，增加处理负担</td><td>预警规则先灰度，支持作废和复核，定期优化规则。</td><td>运营/产品</td></tr>
+              <tr><td>权限配置不当</td><td>敏感数据泄露或用户看不到数据</td><td>上线前提供权限矩阵和生产配置清单，按角色验收。</td><td>系统管理员</td></tr>
+              <tr><td>看板性能压力</td><td>大范围查询慢</td><td>指标预聚合、缓存、异步导出、限制单次查询范围。</td><td>研发</td></tr>
+            </tbody></table></div>
+          </div>
+          <div class="info-box"><h4>14.2 上线计划</h4>
+            <div class="table-wrap"><table style="min-width:620px"><thead><tr><th>阶段</th><th>事项</th><th>计划时间</th><th>负责人</th><th>完成标准</th></tr></thead><tbody>
+              <tr><td>需求评审</td><td>PRD 评审、口径确认、范围确认</td><td>T+0 ~ T+3</td><td>产品/业务/研发/测试</td><td>评审意见闭环，范围冻结。</td></tr>
+              <tr><td>详细设计</td><td>数据模型、接口、页面、权限、规则设计</td><td>T+4 ~ T+8</td><td>产品/研发</td><td>技术方案和原型确认。</td></tr>
+              <tr><td>开发联调</td><td>事件接入、页面开发、规则引擎、消息联调</td><td>T+9 ~ T+25</td><td>研发</td><td>核心功能提测。</td></tr>
+              <tr><td>测试验收</td><td>功能测试、数据口径验证、权限验证、性能测试</td><td>T+26 ~ T+35</td><td>测试/产品/业务</td><td>缺陷收敛，业务验收通过。</td></tr>
+              <tr><td>灰度上线</td><td>选择部分部门/产品线试运行</td><td>T+36 ~ T+45</td><td>项目组</td><td>预警误报和指标问题完成修正。</td></tr>
+              <tr><td>正式上线</td><td>生产发布、配置验证、公告培训</td><td>T+46</td><td>项目组</td><td>生产验证通过，用户可用。</td></tr>
+            </tbody></table></div>
+          </div>
+        </div>
+        <h4 class="sub-title">14.3 生产配置清单</h4>
+        <div class="table-wrap"><table><thead><tr><th>配置项</th><th>配置内容</th><th>负责人</th><th>上线前是否必须</th></tr></thead><tbody>
+          <tr><td>菜单权限</td><td>全链路效能中心、链路分析、预警中心、规则配置</td><td>系统管理员</td><td>是</td></tr>
+          <tr><td>按钮权限</td><td>导出、处理、转派、关闭、作废、发布规则</td><td>系统管理员</td><td>是</td></tr>
+          <tr><td>数据权限</td><td>本人、部门、区域、产品、全量</td><td>系统管理员/业务</td><td>是</td></tr>
+          <tr><td>字段权限</td><td>金额、收入、客户敏感字段、人员排行</td><td>系统管理员/财务</td><td>是</td></tr>
+          <tr><td>基础字典</td><td>对象类型、动作类型、节点类型、预警类型、风险等级、处理状态</td><td>产品/管理员</td><td>是</td></tr>
+          <tr><td>链路模板</td><td>默认 ToB 标准链路模板</td><td>运营/产品</td><td>是</td></tr>
+          <tr><td>SLA 规则</td><td>线索、商机、项目、交付、验收、收入节点时限</td><td>运营/业务</td><td>是</td></tr>
+          <tr><td>消息模板</td><td>临期、超时、严重偏差、转派、关闭复核</td><td>产品/运营</td><td>是</td></tr>
+          <tr><td>定时任务</td><td>链路计算、预警扫描、诊断报告生成、事件补偿</td><td>研发/运维</td><td>是</td></tr>
+          <tr><td>接口白名单</td><td>各业务模块写入事件接口、消息接口、组织权限接口</td><td>研发/运维</td><td>是</td></tr>
+          <tr><td>历史回算脚本</td><td>近 6-12 个月核心对象历史事件回算</td><td>数据研发</td><td>按灰度范围决定</td></tr>
+        </tbody></table></div>
+        <h4 class="sub-title">14.4 回退方案</h4>
+        <div class="note danger"><strong>回退原则：</strong>全链路效能中心不影响原业务模块主流程，若上线后出现异常，可先关闭看板入口、预警扫描任务和消息推送，不回滚原业务数据。</div>
+        <div class="table-wrap"><table><thead><tr><th>异常类型</th><th>回退措施</th><th>数据处理</th><th>恢复条件</th></tr></thead><tbody>
+          <tr><td>事件写入异常</td><td>关闭事件接入或降级为异步补偿</td><td>失败事件进入补偿队列</td><td>接口稳定后重放补偿</td></tr>
+          <tr><td>预警误报严重</td><td>暂停预警扫描和消息发送</td><td>已生成预警标记为待复核</td><td>规则调整并灰度验证后恢复</td></tr>
+          <tr><td>看板性能异常</td><td>关闭大范围查询和导出</td><td>保留事件日志和实例数据</td><td>优化聚合与缓存后恢复</td></tr>
+          <tr><td>权限异常</td><td>临时关闭菜单入口</td><td>不删除业务数据</td><td>权限矩阵验证通过后恢复</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <div class="footer">ToB 全链路效能中心 PRD · 可打印、导出 PDF、复制到知识库或评审文档中使用</div>
+    </main>
+  </div>
+  <script>
+    const tocLinks=Array.from(document.querySelectorAll('#toc a'));
+    const sections=tocLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
+    const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting){tocLinks.forEach(link=>link.classList.remove('active'));const active=tocLinks.find(link=>link.getAttribute('href')==='#'+entry.target.id);if(active)active.classList.add('active');}})},{rootMargin:'-35% 0px -55% 0px',threshold:.01});
+    sections.forEach(section=>observer.observe(section));
+    let compact=false;
+    function toggleAll(){compact=!compact;document.querySelectorAll('.note').forEach(n=>n.style.display=compact?'none':'block');alert(compact?'已收起说明卡片。':'已展开说明卡片。')}
+  </script>
+</body>
+</html>
