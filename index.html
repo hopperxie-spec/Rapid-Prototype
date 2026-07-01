@@ -335,7 +335,8 @@
         status: "草稿 / 待评审",
         statusType: "draft",
         date: "2026-07-01",
-        owner: "产品经理 / ToB 系统建设组",
+        productManager: "谢慧源",
+        contacts: "王奕玮",
         summary: "围绕客户、线索、商机、合同、项目、交付、验收、收入、售后等核心对象，建设统一的业务链路还原、效能分析、偏差检测、风险预警和治理闭环能力。",
         keywords: "ToB 全链路 效能中心 PRD HTML 原型 草稿 待评审",
         assets: [
@@ -351,6 +352,40 @@
             title: "V1.0 HTML 原型",
             desc: "查看全链路效能中心的交互原型，覆盖总览、链路分析、实例追踪、偏差检测、预警中心和规则配置等核心页面。",
             href: "./ToB_全链路效能中心_V1.0_原型.html",
+            action: "打开原型 →"
+          }
+        ]
+      },
+      {
+        version: "V1.0",
+        title: "ToB 移动端工作台与商机创建",
+        status: "草稿 / 待评审",
+        statusType: "draft",
+        date: "2026-07-01",
+        productManager: "谢慧源",
+        contacts: "王奕玮、陈永良",
+        summary: "面向客户经理、交付经理和业务管理者的移动端高频业务入口，覆盖工作台、业务看板、审批待办、应用聚合，以及移动端创建商机分步向导。",
+        keywords: "ToB 移动端 首页 工作台 创建商机 PRD HTML 原型 草稿 待评审",
+        assets: [
+          {
+            type: "PRD",
+            title: "V1.0 移动端 PRD 文档",
+            desc: "查看移动端首页、业务入口、审批待办、应用聚合和创建商机分步向导的需求说明、字段规则、交互规则与验收标准。",
+            href: "./ToB_移动端工作台与商机创建_PRD.html",
+            action: "打开 PRD →"
+          },
+          {
+            type: "HOME",
+            title: "V1.0 移动端首页原型",
+            desc: "查看 ToB 移动端首页工作台原型，包含首页、业务、审批、应用、我的五个底部导航页面。",
+            href: "./ToB_移动端首页_V1.0_原型.html",
+            action: "打开原型 →"
+          },
+          {
+            type: "FORM",
+            title: "V1.0 移动端创建商机原型",
+            desc: "查看移动端创建商机分步向导，覆盖基础信息、预估收入、团队成员、扩展信息、协同事项、拜访信息和确认提交。",
+            href: "./ToB_移动端创建商机_V1.0_原型.html",
             action: "打开原型 →"
           }
         ]
@@ -406,7 +441,8 @@
             </div>
             <div class="version-meta">
               <span>创建日期：${escapeHtml(item.date)}</span>
-              <span>负责人：${escapeHtml(item.owner)}</span>
+              <span>产品经理：${escapeHtml(item.productManager)}</span>
+              <span>接口人：${escapeHtml(item.contacts)}</span>
             </div>
           </div>
           <div class="asset-grid">${item.assets.map(renderAsset).join("")}</div>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ToB 商机创建 · 移动端原型</title>
+  <style>
+    :root{
+      --primary:#2563eb;
+      --primary-dark:#174bb4;
+      --primary-soft:#eef5ff;
+      --primary-line:#cfe0ff;
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --text:#172033;
+      --muted:#667085;
+      --subtle:#98a2b3;
+      --line:#e5eaf2;
+      --danger:#ef4444;
+      --danger-soft:#fff1f2;
+      --warning:#f59e0b;
+      --warning-soft:#fff7ed;
+      --success:#16a34a;
+      --success-soft:#ecfdf3;
+      --purple:#7c3aed;
+      --purple-soft:#f3edff;
+      --shadow:0 14px 34px rgba(15,23,42,.08);
+      --radius:18px;
+      --safe-bottom:env(safe-area-inset-bottom,0px);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;
+      background:
+        radial-gradient(circle at 16% 6%,rgba(37,99,235,.18),transparent 24%),
+        radial-gradient(circle at 84% 4%,rgba(14,165,233,.14),transparent 24%),
+        #dfe8f5;
+      display:flex;
+      justify-content:center;
+    }
+    button,input,textarea{font:inherit}
+    .phone{
+      width:430px;
+      max-width:100vw;
+      min-height:100vh;
+      background:var(--bg);
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 0 0 1px rgba(15,23,42,.06),0 28px 80px rgba(15,23,42,.18);
+    }
+    .hero{
+      position:sticky;
+      top:0;
+      z-index:30;
+      color:#fff;
+      padding:12px 16px 14px;
+      background:
+        radial-gradient(circle at 88% 15%,rgba(255,255,255,.24),transparent 26%),
+        linear-gradient(135deg,#1648b3 0%,#2563eb 52%,#0ea5e9 100%);
+      border-bottom-left-radius:26px;
+      border-bottom-right-radius:26px;
+      box-shadow:0 16px 28px rgba(37,99,235,.18);
+    }
+    .statusbar{height:22px;display:flex;align-items:center;justify-content:space-between;font-size:12px;opacity:.94;margin-bottom:10px}
+    .icons{display:flex;gap:6px;align-items:center}.battery{width:22px;height:10px;border:1.4px solid #fff;border-radius:2px;position:relative}.battery:before{content:"";position:absolute;left:2px;top:2px;width:14px;height:4px;background:#fff;border-radius:1px}.battery:after{content:"";position:absolute;right:-4px;top:2px;width:2px;height:5px;background:#fff;border-radius:1px}
+    .topbar{display:flex;align-items:center;gap:10px;margin-bottom:10px}.round{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.16);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;backdrop-filter:blur(8px)}
+    .title{flex:1;min-width:0}.title h1{font-size:19px;margin:0;letter-spacing:.2px}.title p{font-size:11px;margin:4px 0 0;opacity:.78;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .assist-row{display:flex;gap:8px;margin-bottom:11px}.assist{flex:1;height:34px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.15);color:#fff;border-radius:999px;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;backdrop-filter:blur(8px)}
+    .progress-card{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.14);border-radius:18px;padding:12px;backdrop-filter:blur(12px)}
+    .progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;font-size:12px}.progress-meta b{font-size:13px}.bar{height:6px;border-radius:99px;background:rgba(255,255,255,.24);overflow:hidden}.bar i{display:block;height:100%;width:14.2%;background:#fff;border-radius:inherit;transition:.2s}
+    .step-strip{display:flex;gap:8px;overflow:auto;scrollbar-width:none;margin-top:10px;padding-bottom:2px}.step-strip::-webkit-scrollbar{display:none}.step-chip{flex:0 0 auto;height:31px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);padding:0 11px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:850;text-decoration:none}.step-chip .n{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:10px}.step-chip.active{background:#fff;color:var(--primary)}.step-chip.active .n{background:var(--primary);color:#fff}.step-chip.error:after{content:"";width:6px;height:6px;border-radius:50%;background:#ef4444}.step-chip.done:before{content:"✓";font-size:12px}
+    .content{padding:14px 14px calc(112px + var(--safe-bottom))}.notice{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);box-shadow:0 8px 20px rgba(15,23,42,.04);border-radius:17px;padding:11px 12px;margin-bottom:12px;font-size:12px;color:var(--muted)}.notice b{color:#b45309}.notice .ok{color:var(--success);font-weight:800}
+    .screen{display:none}.screen.active{display:block}.card{background:var(--card);border:1px solid rgba(229,234,242,.92);border-radius:22px;padding:15px;margin-bottom:12px;box-shadow:0 10px 26px rgba(15,23,42,.045)}
+    .section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px;border-left:4px solid var(--primary);padding-left:10px}.section-title h2{margin:0;font-size:18px;line-height:1.15}.section-title p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.45}.level{height:25px;border-radius:999px;padding:0 9px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;border:1px solid var(--primary-line);background:var(--primary-soft);color:var(--primary);white-space:nowrap}.level.p1{background:var(--purple-soft);border-color:#ded2ff;color:var(--purple)}.level.p2{background:#f3f4f6;border-color:#e5e7eb;color:#475569}.group-title{font-size:13px;font-weight:900;color:#334155;margin:14px 0 9px;display:flex;align-items:center;gap:6px}.group-title:first-child{margin-top:0}.group-title:before{content:"";width:4px;height:14px;border-radius:99px;background:var(--primary)}
+    .field{margin-bottom:13px}.field label{font-size:13px;color:#475569;font-weight:850;display:flex;align-items:center;gap:5px;margin-bottom:7px}.req:before{content:"*";color:var(--danger);font-weight:900}.hint{margin-top:6px;color:var(--subtle);font-size:11px;line-height:1.45}.error-text{display:none;margin-top:6px;color:var(--danger);font-size:11px;font-weight:800}.field.invalid .box,.field.invalid textarea,.field.invalid input{border-color:#fecdd3;background:#fff7f8}.field.invalid .error-text{display:block}
+    .box,input,textarea{width:100%;min-height:45px;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 13px;font-size:13px;color:var(--text);outline:none}.box{display:flex;align-items:center;justify-content:space-between;gap:10px}.placeholder{color:#98a2b3}.arrow{color:#94a3b8;font-weight:900}.selectable{cursor:pointer}.selectable:active{transform:scale(.995)}textarea{min-height:94px;resize:none;line-height:1.55}input:focus,textarea:focus{border-color:#bcd2ff;box-shadow:0 0 0 4px rgba(37,99,235,.06)}
+    .seg{display:flex;gap:8px}.seg button,.choice button{height:38px;border:1px solid var(--line);background:#fff;color:#475569;border-radius:13px;padding:0 12px;font-size:12px;font-weight:850;flex:1}.seg button.active,.choice button.active{border-color:var(--primary);background:var(--primary-soft);color:var(--primary)}.choice{display:grid;grid-template-columns:1fr 1fr;gap:8px}.choice.cols3{grid-template-columns:1fr 1fr 1fr}.choice button{height:auto;min-height:40px;line-height:1.35;padding:8px 9px}.hidden{display:none!important}
+    .split{display:grid;grid-template-columns:1fr;gap:0}.customer-card{border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px;margin-bottom:9px;display:flex;align-items:center;gap:10px}.avatar{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,#e9f1ff,#dce8ff);color:var(--primary);font-weight:900;display:flex;align-items:center;justify-content:center;flex:0 0 auto}.customer-main{flex:1;min-width:0}.customer-main b{font-size:13px}.customer-main p{margin:4px 0 0;color:var(--subtle);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.select-link{color:var(--primary);font-size:12px;font-weight:900;white-space:nowrap}
+    .desc-template{border:1px dashed #bad0ff;background:#f7faff;border-radius:14px;padding:10px 11px;color:#5b6b83;font-size:12px;line-height:1.65;margin-bottom:10px}.counter{float:right;color:#98a2b3;font-size:11px;font-weight:700;margin-top:5px}.preview{border:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfdff);border-radius:16px;padding:12px;color:#475569;font-size:12px;line-height:1.6}.preview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.preview-head b{font-size:13px;color:#334155}.preview-actions{display:flex;gap:10px;color:var(--primary);font-weight:850}.chips{display:flex;flex-wrap:wrap;gap:8px}.tag{border:1px solid var(--line);background:#f8fafc;color:#475569;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800}.tag.blue{background:var(--primary-soft);border-color:var(--primary-line);color:var(--primary)}.tag.orange{background:var(--warning-soft);border-color:#fed7aa;color:#b45309}.tag.green{background:var(--success-soft);border-color:#bbf7d0;color:#15803d}.tag.red{background:var(--danger-soft);border-color:#fecdd3;color:#be123c}
+    .switch-row{border:1px solid var(--line);background:#fff;border-radius:15px;padding:12px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;gap:12px}.switch-row b{font-size:13px}.switch-row p{font-size:11px;color:var(--subtle);margin:4px 0 0;line-height:1.35}.switch{width:48px;height:28px;border-radius:999px;background:#e2e8f0;position:relative;flex:0 0 auto;transition:.2s}.switch:after{content:"";width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;box-shadow:0 3px 8px rgba(15,23,42,.16);transition:.2s}.switch.on{background:#9fc0ff}.switch.on:after{left:23px;background:var(--primary)}.money-box{display:flex;align-items:center;gap:8px}.money-box input{flex:1}.unit{width:42px;height:45px;border:1px solid var(--line);border-radius:14px;background:#f8fafc;color:#64748b;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:850}.amount-tip{margin-top:7px;background:#f8fafc;border:1px solid #eef2f7;border-radius:12px;padding:9px;color:#64748b;font-size:11px;line-height:1.45}
+    .user-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px;margin-bottom:9px;display:flex;align-items:center;gap:10px}.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#0ea5e9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900}.user-card.add .user-avatar{background:#eef2f7;color:#64748b}.user-info{flex:1}.user-info b{display:block;font-size:13px}.user-info small{color:var(--subtle);font-size:11px}.mini{height:31px;border-radius:999px;border:1px solid var(--line);background:#fff;color:#475569;font-size:12px;font-weight:850;padding:0 10px}.mini.primary{background:var(--primary-soft);border-color:var(--primary-line);color:var(--primary)}
+    .info-tip{background:var(--warning-soft);border:1px solid #fed7aa;color:#92400e;border-radius:15px;padding:10px 12px;font-size:12px;line-height:1.5;margin:9px 0}.grid-switch{display:grid;grid-template-columns:1fr;gap:0}.form-card-list{display:grid;gap:10px}.item-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px}.item-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}.item-head b{font-size:13px}.item-head .tag{padding:5px 8px;font-size:11px}.kv{display:grid;grid-template-columns:86px 1fr;gap:6px;color:#64748b;font-size:12px;line-height:1.4}.kv span:nth-child(odd){color:#98a2b3}.empty{border:1px dashed #cfd8e7;background:#fbfdff;border-radius:16px;padding:18px;text-align:center;color:#94a3b8;font-size:12px}.add-btn{width:100%;height:42px;border-radius:14px;border:1px solid var(--primary-line);background:#f7faff;color:var(--primary);font-size:13px;font-weight:900;margin-top:10px}.visit-pill{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);background:#fff;border-radius:15px;padding:12px;margin-bottom:9px}.visit-pill b{font-size:13px}.visit-pill p{margin:4px 0 0;color:#98a2b3;font-size:11px}.x{color:#94a3b8;font-weight:900}.summary{display:grid;gap:10px}.summary-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px}.summary-card h3{font-size:14px;margin:0 0 10px}.summary-line{display:flex;justify-content:space-between;gap:16px;font-size:12px;border-top:1px dashed #edf1f6;padding-top:8px;margin-top:8px}.summary-line:first-of-type{border-top:0;padding-top:0;margin-top:0}.summary-line span:first-child{color:#98a2b3}.summary-line span:last-child{text-align:right;color:#334155;font-weight:800}.complete{display:flex;align-items:center;gap:10px;background:var(--success-soft);border:1px solid #bbf7d0;border-radius:16px;padding:12px;color:#166534;font-size:12px;line-height:1.45}.complete .check{width:28px;height:28px;border-radius:50%;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex:0 0 auto}.risk-list{padding-left:18px;margin:8px 0 0;color:#64748b;font-size:12px;line-height:1.65}
+    .footer{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:430px;max-width:100vw;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-top:1px solid rgba(226,232,240,.95);box-shadow:0 -12px 30px rgba(15,23,42,.08);padding:10px 14px calc(10px + var(--safe-bottom))}.save-line{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;font-size:12px}.save-line .saved{display:flex;align-items:center;gap:6px;color:var(--success);font-weight:800}.save-line .saved:before{content:"";width:8px;height:8px;border-radius:50%;background:#34d399}.save-line .required-count{color:#b45309;font-weight:900}.actions{display:grid;grid-template-columns:88px 1fr 1.2fr;gap:8px}.btn{height:46px;border-radius:14px;border:1px solid var(--line);background:#fff;color:#334155;font-size:14px;font-weight:950}.btn.soft{background:var(--primary-soft);border-color:var(--primary-line);color:var(--primary)}.btn.primary{background:linear-gradient(135deg,#2563eb,#144ab8);border-color:transparent;color:#fff;box-shadow:0 12px 22px rgba(37,99,235,.25)}.btn:disabled{opacity:.45}.toast{position:fixed;left:50%;bottom:104px;transform:translateX(-50%) translateY(18px);width:calc(430px - 40px);max-width:calc(100vw - 40px);background:rgba(15,23,42,.92);color:#fff;border-radius:14px;padding:11px 14px;font-size:13px;text-align:center;z-index:80;opacity:0;pointer-events:none;transition:.22s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .sheet-mask{position:fixed;inset:0;background:rgba(15,23,42,.42);z-index:90;display:none;align-items:flex-end;justify-content:center}.sheet-mask.show{display:flex}.sheet{width:430px;max-width:100vw;max-height:82vh;background:#fff;border-radius:24px 24px 0 0;box-shadow:0 -20px 60px rgba(15,23,42,.24);padding:14px 14px calc(14px + var(--safe-bottom));animation:rise .18s ease-out}@keyframes rise{from{transform:translateY(24px);opacity:.8}to{transform:translateY(0);opacity:1}}.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.sheet-head h3{margin:0;font-size:17px}.sheet-close{width:34px;height:34px;border-radius:50%;border:0;background:#f1f5f9;color:#64748b;font-weight:900}.search{height:42px;border-radius:14px;background:#f8fafc;border:1px solid var(--line);padding:0 12px;color:#94a3b8;display:flex;align-items:center;margin-bottom:12px;font-size:13px}.option{border:1px solid var(--line);border-radius:15px;padding:12px;margin-bottom:9px;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px}.option-main b{font-size:13px}.option-main p{margin:4px 0 0;color:#98a2b3;font-size:11px}.option.active{border-color:var(--primary);background:#f7faff}.option.active:after{content:"✓";color:var(--primary);font-weight:900}.sheet-footer{display:flex;gap:8px;margin-top:12px}.sheet-footer .btn{flex:1}
+    @media (max-width:380px){.actions{grid-template-columns:1fr 1fr}.actions .primary{grid-column:1/-1}.choice.cols3{grid-template-columns:1fr 1fr}.title h1{font-size:18px}}
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header class="hero">
+      <div class="statusbar"><span>9:41</span><div class="icons"><span>5G</span><span>▰▰▰</span><span class="battery"></span></div></div>
+      <div class="topbar">
+        <a class="round" href="index.html" aria-label="返回目录" style="text-decoration:none">‹</a>
+        <div class="title"><h1>创建商机</h1><p>移动端分步向导 · 对齐 PC 字段与校验规则</p></div>
+        <button class="round" aria-label="更多">⋯</button>
+      </div>
+      <div class="assist-row">
+        <button class="assist" id="aiBtn">✨ AI助填</button>
+        <button class="assist" id="quickBtn">⚡ 案例快填</button>
+      </div>
+      <div class="progress-card">
+        <div class="progress-meta"><span id="stepHint">基础信息 · P0必填</span><b id="stepText">1 / 7</b></div>
+        <div class="bar"><i id="progressBar"></i></div>
+        <nav class="step-strip" id="stepStrip">
+          <a class="step-chip active error" data-step="0" href="#"><span class="n">1</span>基础</a>
+          <a class="step-chip error" data-step="1" href="#"><span class="n">2</span>收入</a>
+          <a class="step-chip error" data-step="2" href="#"><span class="n">3</span>团队</a>
+          <a class="step-chip" data-step="3" href="#"><span class="n">4</span>扩展</a>
+          <a class="step-chip" data-step="4" href="#"><span class="n">5</span>协同</a>
+          <a class="step-chip" data-step="5" href="#"><span class="n">6</span>拜访</a>
+          <a class="step-chip" data-step="6" href="#"><span class="n">7</span>确认</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="notice"><span><b id="unfilledCount">18 项必填未完成</b> · 每步通过后可进入下一步</span><span class="ok">● 已实时保存</span></div>
+
+      <!-- Step 1 Basic -->
+      <section class="screen active" data-screen="0">
+        <div class="card">
+          <div class="section-title">
+            <div><h2>基础信息</h2><p>移动端拆为“来源—客户—需求—产品—命名”，减少一次性长表单压力。</p></div>
+            <span class="level">P0</span>
+          </div>
+
+          <div class="group-title">合作状态</div>
+          <div class="field" data-required="true">
+            <label class="req">合作状态</label>
+            <div class="seg" id="statusSeg">
+              <button class="active" data-value="合作跟进">合作跟进</button>
+              <button data-value="合同签署中">合同签署中</button>
+            </div>
+            <div class="hint">创建/编辑仅开放「合作跟进」「合同签署中」；历史多态仅在查看或编辑旧数据时承接。</div>
+          </div>
+
+          <div class="group-title">商机来源</div>
+          <div class="field" data-required="true">
+            <label class="req">商机获取方式</label>
+            <div class="seg" id="sourceSeg">
+              <button class="active" data-source="new">新增项目</button>
+              <button data-source="renew">存量项目续签</button>
+            </div>
+          </div>
+          <div class="field" id="sourceSubField" data-required="true">
+            <label class="req">获取方式子类</label>
+            <div class="box selectable" data-sheet="sourceSub"><span>客户经理摸排</span><span class="arrow">›</span></div>
+          </div>
+          <div class="field hidden" id="renewalProjectField" data-required="true">
+            <label class="req">续签项目</label>
+            <div class="box selectable" data-sheet="project"><span class="placeholder">请选择续签项目</span><span class="arrow">›</span></div>
+            <div class="error-text">请选择续签项目</div>
+          </div>
+
+          <div class="field" data-required="true">
+            <label class="req">商机渠道来源</label>
+            <div class="choice cols3" id="originChoice">
+              <button class="active" data-origin="我司">我司</button>
+              <button data-origin="集团公司">集团公司</button>
+              <button data-origin="省公司">省公司</button>
+              <button data-origin="专业公司">专业公司</button>
+              <button data-origin="外部合作伙伴">外部合作伙伴</button>
+            </div>
+            <div class="hint">表单展示短名，完整说明进入字段详情或底部选择页查看。</div>
+          </div>
+          <div id="ecoBlock" class="hidden">
+            <div class="field" data-required="true">
+              <label class="req">生态合作方式</label>
+              <div class="choice" id="ecoChoice">
+                <button class="active" data-eco="渠道代理">渠道代理</button>
+                <button data-eco="集成转售">集成转售</button>
+                <button data-eco="客情推介">客情推介</button>
+                <button data-eco="其他">其他</button>
+              </div>
+              <div class="hint">生态合作子类随主字段同步，不单独增加移动端输入负担。</div>
+            </div>
+          </div>
+
+          <div class="group-title">客户信息</div>
+          <div class="customer-card selectable" data-sheet="customerPrimary" data-required-card="primaryCustomer">
+            <div class="avatar">一</div><div class="customer-main"><b>一级客户</b><p id="primaryCustomerText">请选择与我司签约客户</p></div><span class="select-link">选择</span>
+          </div>
+          <div class="customer-card hidden selectable" id="secondaryCustomerCard" data-sheet="customerSecondary" data-required-card="secondaryCustomer">
+            <div class="avatar">二</div><div class="customer-main"><b>二级客户 <span style="color:var(--danger)">*</span></b><p id="secondaryCustomerText">生态合作=客情推介时必填</p></div><span class="select-link">选择</span>
+          </div>
+          <div class="customer-card selectable" data-sheet="customerTertiary" data-required-card="tertiaryCustomer">
+            <div class="avatar">三</div><div class="customer-main"><b>三级客户</b><p id="tertiaryCustomerText">请选择最终使用客户</p></div><span class="select-link">选择</span>
+          </div>
+
+          <div class="group-title">需求场景描述</div>
+          <div class="desc-template">请按三段结构填写，移动端拆为三个独立输入框：需求背景、业务场景、合作模式。避免使用“一、二、三、”等同级序号，可使用（一）、1、①。</div>
+          <div class="field" data-required="true"><label class="req">需求背景</label><textarea id="desc1" placeholder="客户出现需求的背景原因"></textarea><span class="counter">0/1000</span><div class="error-text">请填写需求背景</div></div>
+          <div class="field" data-required="true"><label class="req">业务场景</label><textarea id="desc2" placeholder="给谁在什么场景解决什么问题"></textarea><span class="counter">0/1000</span><div class="error-text">请填写业务场景</div></div>
+          <div class="field" data-required="true"><label class="req">合作模式</label><textarea id="desc3" placeholder="客户购买/集成转售/自用等合作模式"></textarea><span class="counter">0/1000</span><div class="error-text">请填写合作模式</div></div>
+
+          <div class="preview">
+            <div class="preview-head"><b>商机描述预览</b><div class="preview-actions"><span id="refreshPreview">刷新</span><span id="togglePreview">展开</span></div></div>
+            <div id="previewBody">填写三段描述后，系统将结合合作产品与预估收入生成六段预览，移动端默认折叠到确认页。</div>
+          </div>
+
+          <div class="group-title">时间与产品</div>
+          <div class="field" data-required="true"><label class="req">客户预计购买时间/问题解决时间</label><div class="box selectable" data-sheet="month"><span id="monthText" class="placeholder">请选择年月</span><span class="arrow">›</span></div><div class="error-text">请选择年月</div></div>
+          <div class="field" data-required="true"><label class="req">VRM产品</label><div class="box selectable" data-sheet="vrm"><span id="vrmText" class="placeholder">选择 V / R / M 产品，可多选</span><span class="arrow">›</span></div><div class="hint">移动端使用全屏三级选择器，至少选择 1 个产品。</div><div class="error-text">请选择 VRM 产品</div></div>
+          <div class="field"><label>合作具体产品/能力</label><textarea id="coreFunction" maxlength="100" placeholder="请输入合作具体产品/能力描述，最多100字"></textarea><span class="counter">0/100</span></div>
+          <div class="field" data-required="true"><label class="req">商机名称</label><div class="box"><span id="oppNameText" class="placeholder">客户简称 + 业务场景≤20字 + 产品 + 后缀</span><button class="mini primary" id="genName" type="button">自动生成</button></div><div class="error-text">请填写或自动生成商机名称</div></div>
+        </div>
+      </section>
+
+      <!-- Step 2 Contract -->
+      <section class="screen" data-screen="1">
+        <div class="card">
+          <div class="section-title"><div><h2>预估收入</h2><p>非纯框架录入完整收入口径；纯框架仅保留周期与含分成金额。</p></div><span class="level">P0</span></div>
+          <div class="switch-row"><div><b>是否为纯框架商机</b><p>是：只签框架无后续订单，自动隐藏列账类型、合同预估收入、年度列收等字段。</p></div><div class="switch" id="pureSwitch"></div></div>
+          <div id="nonPureFields">
+            <div class="field" data-required="true"><label class="req">列账收入类型</label><div class="seg" id="accountingSeg"><button class="active">B类</button><button>C类</button></div><div class="hint">B类：增值业务收入；C类：自主拓展收入。</div></div>
+            <div class="field" data-required="true"><label class="req">合同预估收入（剔除分成）</label><div class="money-box"><input id="revenue" inputmode="decimal" placeholder="请输入金额"/><span class="unit">元</span></div><div class="amount-tip" id="revenueTip">支持 2 位小数，提交时显示千分符与中文大写。</div><div class="error-text">请输入合同预估收入</div></div>
+          </div>
+          <div class="field" data-required="true"><label class="req">预估合同周期</label><div class="money-box"><input id="period" inputmode="decimal" placeholder="请输入年数，如 1.5"/><span class="unit">年</span></div><div class="error-text">请输入合同周期</div></div>
+          <div class="field" data-required="true"><label class="req">合同预估金额（含分成）</label><div class="money-box"><input id="amount" inputmode="decimal" placeholder="请输入金额"/><span class="unit">元</span></div><div class="amount-tip">校验：合同预估金额必须大于合同预估收入。</div><div class="error-text">请输入合同预估金额</div></div>
+          <div id="nonPureFields2">
+            <div class="field" data-required="true"><label class="req">预估本年列收</label><div class="money-box"><input id="yearly" inputmode="decimal" placeholder="请输入金额"/><span class="unit">元</span></div><div class="amount-tip">校验：预估本年列收 ≤ 合同预估收入。</div><div class="error-text">请输入预估本年列收</div></div>
+            <div class="field" data-required="true"><label class="req">2026年项目预估能力值</label><div class="money-box"><input id="capability" inputmode="decimal" placeholder="请输入金额"/><span class="unit">元</span></div><div class="error-text">请输入2026年项目预估能力值</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3 Team -->
+      <section class="screen" data-screen="2">
+        <div class="card">
+          <div class="section-title"><div><h2>团队成员</h2><p>客户经理为 P0 必填；其余角色支持多选，移动端用人员卡片承载。</p></div><span class="level">P0/P1</span></div>
+          <div class="field" data-required="true">
+            <label class="req">客户经理</label>
+            <div class="user-card selectable" data-sheet="userAccount"><div class="user-avatar">客</div><div class="user-info"><b id="accountManagerText">请选择客户经理</b><small>可多选，默认可回填当前用户</small></div><span class="select-link">选择</span></div>
+            <div class="error-text">请选择客户经理</div>
+          </div>
+          <div class="user-card selectable" data-sheet="userBusiness"><div class="user-avatar">商</div><div class="user-info"><b>商务经理</b><small id="businessManagerText">未选择</small></div><span class="select-link">选择</span></div>
+          <div class="user-card selectable" data-sheet="userProject"><div class="user-avatar">交</div><div class="user-info"><b>交付经理</b><small id="projectManagerText">未选择</small></div><span class="select-link">选择</span></div>
+          <div class="user-card selectable" data-sheet="userSolution"><div class="user-avatar">方</div><div class="user-info"><b>解决方案经理</b><small id="solutionManagerText">未选择</small></div><span class="select-link">选择</span></div>
+          <div class="group-title">重点商机场景补充</div>
+          <div class="user-card add selectable" data-sheet="userLeader"><div class="user-avatar">+</div><div class="user-info"><b>牵头挂帅领导 / 挂帅领导</b><small>仅重点商机编辑等场景必填或可选</small></div><span class="level p1">P1</span></div>
+        </div>
+      </section>
+
+      <!-- Step 4 Expansion -->
+      <section class="screen" data-screen="3">
+        <div class="card">
+          <div class="section-title"><div><h2>扩展信息</h2><p>开关类字段移动端分组展示；纯框架时自动隐藏 DICT/投标等字段。</p></div><span class="level p1">P1</span></div>
+          <div class="grid-switch" id="normalExpansion">
+            <div class="switch-row"><div><b>是否涉密</b><p>默认否，开启后生成涉密自动标签。</p></div><div class="switch" data-tag="涉密"></div></div>
+            <div class="switch-row"><div><b>是否为 DICT 项目</b><p>纯框架时隐藏；存量续签时可按 PC 逻辑禁用。</p></div><div class="switch" data-tag="DICT"></div></div>
+            <div class="switch-row"><div><b>是否投标</b><p>开启后显示投标类型。</p></div><div class="switch" id="biddingSwitch" data-tag="投标"></div></div>
+            <div class="field hidden" id="biddingTypeField"><label>投标类型</label><div class="box selectable" data-sheet="bidding"><span id="biddingTypeText" class="placeholder">请选择投标类型</span><span class="arrow">›</span></div></div>
+          </div>
+          <div class="switch-row"><div><b>是否申请为重点商机</b><p>一次性操作，提交后触发重点商机审批。</p></div><div class="switch" id="keySwitch" data-tag="申请重点"></div></div>
+          <div id="keyReasonBlock" class="hidden">
+            <div class="info-tip">保存提交后将自动发起重点商机审批；审批通过后显示为重点商机，不可重复开启。</div>
+            <div class="field" data-required="conditional-key"><label class="req">申请理由</label><textarea id="keyReason" maxlength="2000" placeholder="请输入重点商机申请理由"></textarea><span class="counter">0/2000</span><div class="error-text">开启重点商机时必须填写申请理由</div></div>
+          </div>
+          <div class="field"><label>销点部门</label><input id="salesDept" placeholder="请输入销点部门" /></div>
+          <div class="field"><label>销点部门线条</label><div class="seg"><button>大市场</button><button class="active">政企</button><button>其他</button></div></div>
+          <div class="switch-row"><div><b>是否新方案</b><p>开启后生成自动标签。</p></div><div class="switch" data-tag="新方案"></div></div>
+          <div class="switch-row"><div><b>是否新场景</b><p>开启后生成自动标签。</p></div><div class="switch" data-tag="新场景"></div></div>
+          <div class="switch-row"><div><b>是否出海</b><p>用于经营分析与后续统计。</p></div><div class="switch" data-tag="出海"></div></div>
+          <div class="switch-row"><div><b>是否包含境外佣金</b><p>开启后需关注合规提示与报账口径。</p></div><div class="switch" data-tag="境外佣金"></div></div>
+          <div class="field"><label>备注</label><textarea id="remarks" maxlength="1000" placeholder="请输入备注信息"></textarea><span class="counter">0/1000</span></div>
+          <div class="field"><label>标签</label><div class="chips" id="autoTags"><span class="tag blue">合作跟进</span><span class="tag orange">草稿</span><span class="tag blue">我司</span></div><div class="hint">自动标签只读联动；手动标签支持回车/逗号添加。</div><input id="manualTag" placeholder="输入标签后按回车添加" style="margin-top:9px"/></div>
+        </div>
+      </section>
+
+      <!-- Step 5 Coordination -->
+      <section class="screen" data-screen="4">
+        <div class="card">
+          <div class="section-title"><div><h2>协同事项</h2><p>PC 宽表改为卡片列表；添加事项仍走全屏 Sheet 或独立页。</p></div><span class="level p2">P2</span></div>
+          <div class="switch-row"><div><b>展示协同事项区</b><p>查看模式默认展开，创建时可按需开启。</p></div><div class="switch on" id="coordSwitch"></div></div>
+          <div id="coordBlock">
+            <div class="group-title">协同事项</div>
+            <div class="form-card-list">
+              <div class="item-card"><div class="item-head"><b>政企行业方案支撑</b><span class="tag blue">协同需求</span></div><div class="kv"><span>需协同部门</span><span>和商智联</span><span>需求大类</span><span>方案支撑</span><span>归属VRM</span><span>5G消息智能体服务</span><span>责任人</span><span>待分配</span></div></div>
+            </div>
+            <button class="add-btn">＋ 添加协同事项</button>
+            <div class="group-title">跟进进展</div>
+            <div class="empty">暂无跟进进展，可点击下方按钮添加常规进展、客户沟通或内部推进记录。</div>
+            <button class="add-btn">＋ 添加跟进进展</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 6 Visits -->
+      <section class="screen" data-screen="5">
+        <div class="card">
+          <div class="section-title"><div><h2>拜访信息</h2><p>关联已有拜访主题，或在全屏选择页中新建拜访记录。</p></div><span class="level p2">P2</span></div>
+          <div class="visit-pill"><div><b>政务云扩容项目需求确认</b><p>2026-06-28 · 客户现场拜访</p></div><span class="x">×</span></div>
+          <div class="visit-pill"><div><b>5G消息产品方案沟通</b><p>2026-06-25 · 线上会议</p></div><span class="x">×</span></div>
+          <button class="add-btn" data-sheet="visit">＋ 添加拜访</button>
+          <div class="group-title">系统信息</div>
+          <div class="preview"><div class="kv"><span>阶段</span><span>商机</span><span>报送人</span><span>当前用户</span><span>负责人</span><span>当前用户</span><span>报送时间</span><span>当前时间 ISO</span><span>默认列账类型</span><span>B类</span></div></div>
+        </div>
+      </section>
+
+      <!-- Step 7 Confirm -->
+      <section class="screen" data-screen="6">
+        <div class="card">
+          <div class="section-title"><div><h2>确认提交</h2><p>移动端新增确认页，集中展示关键字段、必填完成度与提交影响。</p></div><span class="level">确认</span></div>
+          <div class="complete"><div class="check">✓</div><div><b>已生成提交摘要</b><br/>正式保存将创建合作机会；存为草稿不会触发正式商机流转。</div></div>
+          <div class="summary" style="margin-top:12px">
+            <div class="summary-card"><h3>商机核心信息</h3><div class="summary-line"><span>商机名称</span><span id="sumName">待自动生成</span></div><div class="summary-line"><span>合作状态</span><span id="sumStatus">合作跟进</span></div><div class="summary-line"><span>一级客户</span><span id="sumCustomer">未选择</span></div><div class="summary-line"><span>VRM产品</span><span id="sumVrm">未选择</span></div></div>
+            <div class="summary-card"><h3>预估收入</h3><div class="summary-line"><span>纯框架</span><span id="sumPure">否</span></div><div class="summary-line"><span>合同预估收入</span><span id="sumRevenue">0 元</span></div><div class="summary-line"><span>合同预估金额</span><span id="sumAmount">0 元</span></div><div class="summary-line"><span>本年列收</span><span id="sumYearly">0 元</span></div></div>
+            <div class="summary-card"><h3>团队与风险</h3><div class="summary-line"><span>客户经理</span><span id="sumManager">未选择</span></div><div class="summary-line"><span>重点申请</span><span id="sumKey">否</span></div><ul class="risk-list"><li>校验失败时，步骤条展示红点并定位到首个错误字段。</li><li>网络失败时保留本地状态，可继续存为草稿。</li><li>开启重点申请后，按钮文案变为「保存并提交」。</li></ul></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="save-line"><span class="saved">已实时保存</span><span class="required-count" id="footerCount">18 项必填未完成</span></div>
+      <div class="actions">
+        <button class="btn" id="prevBtn">上一步</button>
+        <button class="btn soft" id="draftBtn">存草稿</button>
+        <button class="btn primary" id="nextBtn">下一步</button>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="sheet-mask" id="sheetMask">
+    <div class="sheet">
+      <div class="sheet-head"><h3 id="sheetTitle">选择</h3><button class="sheet-close" id="sheetClose">×</button></div>
+      <div class="search">搜索名称 / 编码 / 关键词</div>
+      <div id="sheetOptions"></div>
+      <div class="sheet-footer"><button class="btn" id="sheetCancel">取消</button><button class="btn primary" id="sheetConfirm">确认回填</button></div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      step:0,
+      status:'合作跟进',
+      source:'新增项目',
+      origin:'我司',
+      eco:'渠道代理',
+      primaryCustomer:'', secondaryCustomer:'', tertiaryCustomer:'',
+      month:'', vrm:'', oppName:'', accountManager:'',
+      pure:false, key:false, bidding:false,
+      sheetType:null, sheetValue:null
+    };
+    const steps = [
+      {name:'基础信息', hint:'基础信息 · P0必填'},
+      {name:'预估收入', hint:'预估收入 · 纯框架分支'},
+      {name:'团队成员', hint:'团队成员 · 客户经理必填'},
+      {name:'扩展信息', hint:'扩展信息 · 开关条件显隐'},
+      {name:'协同事项', hint:'协同事项 · 表格改卡片'},
+      {name:'拜访信息', hint:'拜访信息 · 关联记录'},
+      {name:'确认提交', hint:'确认提交 · 摘要与校验'}
+    ];
+
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => [...document.querySelectorAll(sel)];
+    const toast = (msg) => { const el=$('#toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1800); };
+    function setStep(i){
+      state.step = Math.max(0, Math.min(6, i));
+      $$('.screen').forEach((s,idx)=>s.classList.toggle('active', idx===state.step));
+      $$('.step-chip').forEach((c,idx)=>{ c.classList.toggle('active', idx===state.step); c.classList.toggle('done', idx<state.step); });
+      $('#stepText').textContent = (state.step+1)+' / 7';
+      $('#stepHint').textContent = steps[state.step].hint;
+      $('#progressBar').style.width = (((state.step+1)/7)*100)+'%';
+      $('#prevBtn').disabled = state.step===0;
+      $('#nextBtn').textContent = state.step===6 ? (state.key ? '保存并提交' : '保存') : '下一步';
+      updateSummary();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function updateRequired(){
+      let count = 18;
+      if(state.primaryCustomer) count--;
+      if(state.tertiaryCustomer) count--;
+      if(state.month) count--;
+      if(state.vrm) count--;
+      if(state.oppName) count--;
+      if($('#desc1').value.trim()) count--;
+      if($('#desc2').value.trim()) count--;
+      if($('#desc3').value.trim()) count--;
+      if(state.accountManager) count--;
+      if($('#period').value.trim()) count--;
+      if($('#amount').value.trim()) count--;
+      if(!state.pure){
+        if($('#revenue').value.trim()) count--;
+        if($('#yearly').value.trim()) count--;
+        if($('#capability').value.trim()) count--;
+      } else { count -= 3; }
+      if(state.origin==='外部合作伙伴' || state.origin==='专业公司') count--;
+      else count--;
+      if(state.eco==='客情推介') { if(state.secondaryCustomer) count--; } else count--;
+      if(state.key) { if($('#keyReason').value.trim()) count--; } else count--;
+      count = Math.max(0,count);
+      $('#unfilledCount').textContent = count+' 项必填未完成';
+      $('#footerCount').textContent = count+' 项必填未完成';
+      $$('.step-chip')[0].classList.toggle('error', !(state.primaryCustomer && state.tertiaryCustomer && state.month && state.vrm && state.oppName && $('#desc1').value && $('#desc2').value && $('#desc3').value));
+      $$('.step-chip')[1].classList.toggle('error', !(state.pure ? ($('#period').value && $('#amount').value) : ($('#period').value && $('#amount').value && $('#revenue').value && $('#yearly').value && $('#capability').value)));
+      $$('.step-chip')[2].classList.toggle('error', !state.accountManager);
+    }
+    function updateSummary(){
+      $('#sumName').textContent = state.oppName || '待自动生成';
+      $('#sumStatus').textContent = state.status;
+      $('#sumCustomer').textContent = state.primaryCustomer || '未选择';
+      $('#sumVrm').textContent = state.vrm || '未选择';
+      $('#sumPure').textContent = state.pure ? '是' : '否';
+      $('#sumRevenue').textContent = ($('#revenue').value || '0') + ' 元';
+      $('#sumAmount').textContent = ($('#amount').value || '0') + ' 元';
+      $('#sumYearly').textContent = state.pure ? '纯框架不填' : (($('#yearly').value || '0') + ' 元');
+      $('#sumManager').textContent = state.accountManager || '未选择';
+      $('#sumKey').textContent = state.key ? '是，保存后发起审批' : '否';
+      updateRequired();
+    }
+
+    $('#stepStrip').addEventListener('click', e=>{ const a=e.target.closest('.step-chip'); if(a){e.preventDefault(); setStep(Number(a.dataset.step));} });
+    $('#prevBtn').addEventListener('click', ()=>setStep(state.step-1));
+    $('#nextBtn').addEventListener('click', ()=>{
+      if(state.step<6){ setStep(state.step+1); return; }
+      toast(state.key ? '已模拟保存并提交重点商机审批' : '已模拟保存商机');
+    });
+    $('#draftBtn').addEventListener('click', ()=>toast('草稿已保存：isDraft=true，不触发正式提交'));
+
+    function bindSeg(id, cb){ $(id).addEventListener('click', e=>{ const btn=e.target.closest('button'); if(!btn)return; [...btn.parentNode.children].forEach(b=>b.classList.remove('active')); btn.classList.add('active'); cb(btn); updateSummary(); }); }
+    bindSeg('#statusSeg', btn=>{ state.status=btn.dataset.value; $('#autoTags').querySelector('.tag.blue').textContent=state.status; });
+    bindSeg('#sourceSeg', btn=>{ state.source=btn.textContent; const renew=btn.dataset.source==='renew'; $('#sourceSubField').classList.toggle('hidden', renew); $('#renewalProjectField').classList.toggle('hidden', !renew); });
+    bindSeg('#originChoice', btn=>{ state.origin=btn.dataset.origin; const showEco = ['外部合作伙伴','专业公司'].includes(state.origin); $('#ecoBlock').classList.toggle('hidden', !showEco); $('#autoTags').lastElementChild.textContent=state.origin; updateRequired(); });
+    bindSeg('#ecoChoice', btn=>{ state.eco=btn.dataset.eco; $('#secondaryCustomerCard').classList.toggle('hidden', state.eco!=='客情推介'); updateRequired(); });
+    bindSeg('#accountingSeg', ()=>{});
+
+    $('#pureSwitch').addEventListener('click', e=>{ e.currentTarget.classList.toggle('on'); state.pure=e.currentTarget.classList.contains('on'); $('#nonPureFields').classList.toggle('hidden', state.pure); $('#nonPureFields2').classList.toggle('hidden', state.pure); $('#normalExpansion').classList.toggle('hidden', state.pure); updateSummary(); });
+    $('#biddingSwitch').addEventListener('click', e=>{ e.currentTarget.classList.toggle('on'); state.bidding=e.currentTarget.classList.contains('on'); $('#biddingTypeField').classList.toggle('hidden', !state.bidding); updateTags(); });
+    $('#keySwitch').addEventListener('click', e=>{ e.currentTarget.classList.toggle('on'); state.key=e.currentTarget.classList.contains('on'); $('#keyReasonBlock').classList.toggle('hidden', !state.key); $('#nextBtn').textContent = state.step===6 ? (state.key ? '保存并提交' : '保存') : '下一步'; updateTags(); updateSummary(); });
+    $('#coordSwitch').addEventListener('click', e=>{ e.currentTarget.classList.toggle('on'); $('#coordBlock').classList.toggle('hidden', !e.currentTarget.classList.contains('on')); });
+    $$('.switch[data-tag]').forEach(sw=>sw.addEventListener('click', e=>{ if(e.currentTarget.id==='biddingSwitch'||e.currentTarget.id==='keySwitch')return; e.currentTarget.classList.toggle('on'); updateTags(); }));
+    function updateTags(){
+      const tags=['合作跟进','草稿',state.origin];
+      $$('.switch.on[data-tag]').forEach(sw=>tags.push(sw.dataset.tag));
+      $('#autoTags').innerHTML = tags.map((t,i)=>`<span class="tag ${i===1?'orange':'blue'}">${t}</span>`).join('');
+    }
+
+    const sheetData = {
+      sourceSub:{title:'选择获取方式子类',options:[['客户经理摸排','销售主动摸排形成商机'],['项目追售','现有项目延展新增需求'],['商机搭售','与其他机会组合推进'],['存量项目拆分','从存量项目拆分为独立商机'],['招投标网爬虫','来源于招投标线索'],['其他方式','其他来源']]},
+      project:{title:'选择续签项目',options:[['政务云扩容一期项目','项目编码 PRJ-2026-001'],['5G消息运营服务项目','项目编码 PRJ-2025-108']]},
+      customerPrimary:{title:'选择一级客户',options:[['和商智联','与我司签约客户'],['广东省政务服务数据管理局','政企直签客户'],['中移互联网有限公司','集团内客户']]},
+      customerSecondary:{title:'选择二级客户',options:[['某生态渠道商','中间渠道商 / 客情推介'],['某集成服务商','生态合作伙伴']]},
+      customerTertiary:{title:'选择三级客户',options:[['某省政务云运营中心','最终使用客户'],['某大型制造集团','最终使用客户'],['某互联网金融企业','最终使用客户']]},
+      month:{title:'选择年月',options:[['2026-07','预计购买 / 解决时间'],['2026-08','预计购买 / 解决时间'],['2026-09','预计购买 / 解决时间'],['2026-12','预计购买 / 解决时间']]},
+      vrm:{title:'选择 VRM 产品',options:[['V02-R01-M03 · 5G消息智能体服务','V/R/M 级联产品'],['V01-R02 · 内容安全管控','可只选到 R 产品'],['V03 · 移动云能力平台','可只选到 V 产品']]},
+      userAccount:{title:'选择客户经理',options:[['李四（13900139002）','客户经理'],['王五（13700137003）','客户经理']]},
+      userBusiness:{title:'选择商务经理',options:[['孙经理（13700137008）','商务经理'],['周经理（13800138099）','商务经理']]},
+      userProject:{title:'选择交付经理',options:[['赵六（13600136004）','交付经理'],['钱七（13500135005）','交付经理']]},
+      userSolution:{title:'选择解决方案经理',options:[['吴经理（13800138001）','解决方案经理'],['郑经理（13800138009）','解决方案经理']]},
+      userLeader:{title:'选择挂帅领导',options:[['陈总','牵头挂帅领导'],['刘总','挂帅领导']]},
+      bidding:{title:'选择投标类型',options:[['公开招标','投标类型'],['单一来源（系统内）','投标类型'],['竞争性谈判','投标类型'],['询价','投标类型'],['邀请招标','投标类型'],['竞争性磋商','投标类型'],['甄选','投标类型'],['直接采购','投标类型']]},
+      visit:{title:'添加拜访',options:[['政务云扩容项目需求确认','2026-06-28 · 客户现场拜访'],['5G消息产品方案沟通','2026-06-25 · 线上会议'],['内容安全能力演示','2026-06-20 · 线上会议']]}
+    };
+    function openSheet(type){
+      state.sheetType=type; state.sheetValue=null;
+      const data=sheetData[type]||sheetData.sourceSub;
+      $('#sheetTitle').textContent=data.title;
+      $('#sheetOptions').innerHTML=data.options.map((o,i)=>`<div class="option" data-value="${o[0]}"><div class="option-main"><b>${o[0]}</b><p>${o[1]}</p></div></div>`).join('');
+      $('#sheetMask').classList.add('show');
+    }
+    document.body.addEventListener('click', e=>{ const t=e.target.closest('[data-sheet]'); if(t && !t.classList.contains('add-btn')) openSheet(t.dataset.sheet); });
+    $$('.add-btn[data-sheet]').forEach(btn=>btn.addEventListener('click',()=>openSheet(btn.dataset.sheet)));
+    $('#sheetOptions').addEventListener('click', e=>{ const opt=e.target.closest('.option'); if(!opt)return; $$('.option').forEach(o=>o.classList.remove('active')); opt.classList.add('active'); state.sheetValue=opt.dataset.value; });
+    function closeSheet(){ $('#sheetMask').classList.remove('show'); }
+    $('#sheetClose').addEventListener('click',closeSheet); $('#sheetCancel').addEventListener('click',closeSheet); $('#sheetMask').addEventListener('click',e=>{ if(e.target.id==='sheetMask')closeSheet(); });
+    $('#sheetConfirm').addEventListener('click',()=>{
+      const v=state.sheetValue; if(!v){ toast('请选择一条数据'); return; }
+      const type=state.sheetType;
+      const map={
+        sourceSub:()=>$('#sourceSubField .box span').textContent=v,
+        project:()=>$('#renewalProjectField .box span').textContent=v,
+        customerPrimary:()=>{state.primaryCustomer=v; $('#primaryCustomerText').textContent=v;},
+        customerSecondary:()=>{state.secondaryCustomer=v; $('#secondaryCustomerText').textContent=v;},
+        customerTertiary:()=>{state.tertiaryCustomer=v; $('#tertiaryCustomerText').textContent=v;},
+        month:()=>{state.month=v; $('#monthText').textContent=v; $('#monthText').classList.remove('placeholder');},
+        vrm:()=>{state.vrm=v; $('#vrmText').textContent=v; $('#vrmText').classList.remove('placeholder');},
+        userAccount:()=>{state.accountManager=v; $('#accountManagerText').textContent=v;},
+        userBusiness:()=>$('#businessManagerText').textContent=v,
+        userProject:()=>$('#projectManagerText').textContent=v,
+        userSolution:()=>$('#solutionManagerText').textContent=v,
+        userLeader:()=>toast('已选择挂帅领导：'+v),
+        bidding:()=>{ $('#biddingTypeText').textContent=v; $('#biddingTypeText').classList.remove('placeholder'); },
+        visit:()=>toast('已关联拜访：'+v)
+      };
+      (map[type]||(()=>{}))();
+      closeSheet(); updateSummary();
+    });
+
+    $('#genName').addEventListener('click',()=>{
+      const customer = state.primaryCustomer || '一级客户';
+      const terminal = state.tertiaryCustomer || '三级客户';
+      const product = state.vrm ? state.vrm.split('·').pop().trim().slice(0,16) : 'VRM产品';
+      const scene = ($('#desc2').value.trim() || '业务场景').slice(0,20);
+      const suffix = state.source==='存量项目续签' ? '续签' : (state.status==='合同签署中' ? '合作' : '商机');
+      state.oppName = `${customer}-${terminal}${scene}${product}的${suffix}`;
+      $('#oppNameText').textContent = state.oppName;
+      $('#oppNameText').classList.remove('placeholder');
+      updateSummary(); toast('已按规则自动生成商机名称');
+    });
+    $('#quickBtn').addEventListener('click',()=>{
+      state.primaryCustomer='和商智联'; state.tertiaryCustomer='某省政务云运营中心'; state.month='2026-08'; state.vrm='V02-R01-M03 · 5G消息智能体服务'; state.accountManager='李四（13900139002）';
+      $('#primaryCustomerText').textContent=state.primaryCustomer; $('#tertiaryCustomerText').textContent=state.tertiaryCustomer; $('#monthText').textContent=state.month; $('#monthText').classList.remove('placeholder'); $('#vrmText').textContent=state.vrm; $('#vrmText').classList.remove('placeholder'); $('#accountManagerText').textContent=state.accountManager;
+      $('#desc1').value='客户计划升级政企触达体系，现有短信与人工触达效率较低，需要统一消息触达能力。';
+      $('#desc2').value='面向政企客户会员召回、服务提醒与营销通知，解决触达链路分散和转化效率低的问题。';
+      $('#desc3').value='客户采购5G消息智能体服务，并结合内容安全管控能力开展运营合作。';
+      $('#revenue').value='800000'; $('#period').value='2'; $('#amount').value='1000000'; $('#yearly').value='350000'; $('#capability').value='500000';
+      $('#genName').click(); updateCounters(); toast('已写入案例快填数据');
+    });
+    $('#aiBtn').addEventListener('click',()=>toast('AI助填：移动端建议进入独立全屏对话页'));
+    function updateCounters(){ $$('textarea').forEach(t=>{ const c=t.parentNode.querySelector('.counter'); if(c){ const max=t.getAttribute('maxlength')||1000; c.textContent=`${t.value.length}/${max}`; } }); updateSummary(); }
+    $$('textarea,input').forEach(el=>el.addEventListener('input',updateCounters));
+    $('#refreshPreview').addEventListener('click',()=>{ $('#previewBody').textContent = [$('#desc1').value,$('#desc2').value,$('#desc3').value].filter(Boolean).join('；') || '填写三段描述后自动生成预览。'; toast('已刷新商机描述预览'); });
+    $('#togglePreview').addEventListener('click',()=>toast('详细六段预览建议放入确认页或 Bottom Sheet'));
+    $('#manualTag').addEventListener('keydown',e=>{ if(e.key==='Enter' || e.key===','){ e.preventDefault(); const v=e.currentTarget.value.trim().replace(',',''); if(v){ $('#autoTags').insertAdjacentHTML('beforeend',`<span class="tag green">${v}</span>`); e.currentTarget.value=''; } } });
+    setStep(0); updateCounters();
+  </script>
+</body>
+</html>
