@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>版本需求公示</title>
+  <link rel="prefetch" href="index.html" />
+  <link rel="preload" href="data/versions.csv" as="fetch" crossorigin="anonymous" />
+  <link rel="preload" href="data/requirements.csv" as="fetch" crossorigin="anonymous" />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #667085;
+      --border: #e5e7eb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --green: #16a34a;
+      --green-soft: #ecfdf3;
+      --orange: #f97316;
+      --orange-soft: #fff7ed;
+      --red: #dc2626;
+      --red-soft: #fff1f2;
+      --purple: #7c3aed;
+      --purple-soft: #f3edff;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --shadow-hover: 0 14px 34px rgba(15, 23, 42, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      overflow-y: scroll;
+      scrollbar-gutter: stable;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34%),
+        linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(229, 231, 235, 0.88);
+      background: rgba(248, 250, 252, 0.86);
+      backdrop-filter: blur(14px);
+    }
+
+    .top-nav-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      color: #1f2937;
+      font-weight: 900;
+    }
+
+    .nav-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), #0ea5e9);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .page {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 42px 24px 72px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-end;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      margin-bottom: 14px;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      background: rgba(239, 246, 255, 0.82);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.2;
+    }
+
+    .desc {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .count {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .release-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+      gap: 14px;
+      margin-bottom: 18px;
+      min-height: 104px;
+    }
+
+    .release-card,
+    .stat-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    .release-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .release-card h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .release-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stat-card label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 180px 180px 180px;
+      gap: 12px;
+      margin: 0 0 18px;
+    }
+
+    .view-switch {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin: -6px 0 16px;
+    }
+
+    .view-btn {
+      min-height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0 13px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .view-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0 14px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--text);
+      font-size: 14px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .list {
+      display: grid;
+      gap: 16px;
+      min-height: 180px;
+    }
+
+    .version-section {
+      display: grid;
+      gap: 14px;
+    }
+
+    .version-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-end;
+      padding: 4px 2px;
+    }
+
+    .version-heading h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .version-heading p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .version-heading-meta {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .req-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .req-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 18px;
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .req-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .req-title h2 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.35;
+    }
+
+    .summary {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .badge.seq { background: var(--primary-soft); color: var(--primary-dark); }
+    .badge.module { background: var(--purple-soft); color: var(--purple); }
+    .badge.status { background: var(--orange-soft); color: #c2410c; }
+    .badge.p0 { background: var(--red-soft); color: #b91c1c; }
+    .badge.p1 { background: #ede9fe; color: #6d28d9; }
+
+    .owner-box {
+      display: grid;
+      gap: 8px;
+      color: #344054;
+      font-size: 13px;
+    }
+
+    .owner-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #dbe1ea;
+    }
+
+    .owner-line:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .owner-line span:first-child {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .owner-line span:last-child {
+      text-align: right;
+      font-weight: 800;
+    }
+
+    .req-detail {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 16px;
+      padding: 18px 20px 20px;
+    }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .task {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .task label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .task div {
+      font-size: 14px;
+      font-weight: 800;
+      color: #344054;
+    }
+
+    .remark {
+      margin-top: 10px;
+      border: 1px solid #e0e7ff;
+      border-radius: 12px;
+      padding: 12px;
+      color: #475569;
+      background: rgba(238, 242, 255, 0.55);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .asset-panel {
+      display: grid;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .asset {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 900;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .asset:hover {
+      transform: translateY(-1px);
+      border-color: rgba(37, 99, 235, 0.55);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .asset small {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #98a2b3;
+      font-weight: 500;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .req-table {
+      width: 100%;
+      min-width: 940px;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .req-table th,
+    .req-table td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.55;
+      overflow: hidden;
+    }
+
+    .req-table th {
+      background: #f8fafc;
+      color: #475467;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .req-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .req-table .seq-col { width: 54px; }
+    .req-table .point-col { width: 320px; }
+    .req-table .type-col { width: 96px; }
+    .req-table .module-col { width: 190px; }
+    .req-table .owner-col { width: 120px; }
+    .req-table .priority-col { width: 100px; }
+    .req-table .status-col { width: 96px; }
+    .req-table .detail-col { width: 104px; }
+
+    .point-title {
+      font-weight: 900;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    .point-summary {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .module-text {
+      color: #6d28d9;
+      font-weight: 800;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+
+    .table-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .table-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-weight: 900;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .detail-toggle {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #f8fafc;
+      color: var(--primary-dark);
+      border: 1px solid #dbeafe;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .row-details {
+      width: 100%;
+    }
+
+    .row-details summary {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--primary-dark);
+      border: 1px solid #dbeafe;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 12px;
+      list-style: none;
+    }
+
+    .row-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .detail-toggle:hover {
+      background: var(--primary-soft);
+    }
+
+    .detail-row[hidden] {
+      display: none;
+    }
+
+    .detail-panel {
+      padding: 12px;
+      background: #f8fafc;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 12px;
+      background: #f8fafc;
+    }
+
+    .detail-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+      color: #344054;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .detail-item label {
+      display: block;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .detail-row td {
+      padding: 8px 12px;
+      background: #f8fafc;
+    }
+
+    .empty {
+      display: none;
+      padding: 24px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .tips {
+      margin-top: 24px;
+      padding: 16px 18px;
+      border: 1px solid #e0e7ff;
+      border-radius: 16px;
+      background: rgba(238, 242, 255, 0.7);
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 900px) {
+      .top-nav-inner { padding: 12px 16px; align-items: flex-start; flex-direction: column; }
+      .nav-links { width: 100%; }
+      .nav-link { flex: 1; }
+      .page { padding: 34px 16px 48px; }
+      .header { display: block; }
+      .count { display: inline-flex; margin-top: 16px; }
+      .title { font-size: 28px; }
+      .release-panel { grid-template-columns: 1fr 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+      .version-heading { display: block; }
+      .version-heading-meta { margin-top: 8px; text-align: left; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .release-panel { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="top-nav">
+    <div class="top-nav-inner">
+      <a class="nav-brand" href="index.html"><span class="nav-mark">灰</span><span>ToB 需求与原型资产库</span></a>
+      <div class="nav-links" aria-label="顶部导航">
+        <a class="nav-link active" href="requirements.html">版本需求公示</a>
+        <a class="nav-link" href="index.html">快速原型预览</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="header">
+      <div>
+        <div class="eyebrow">@灰原出品 · Requirement Bulletin</div>
+        <h1 class="title">版本需求公示</h1>
+        <p class="desc">保留线下表格的字段口径，用更适合 Web 阅读的方式展示版本信息、需求点、责任人、研发测试分工和关联资产。</p>
+      </div>
+      <div class="count" id="visibleCount">0 条需求</div>
+    </header>
+
+    <section class="release-panel" id="releasePanel">
+      <div class="release-card">
+        <h2>版本需求读取中</h2>
+        <div class="release-meta"><span>正在加载本地 CSV 数据...</span></div>
+      </div>
+      <div class="stat-card"><label>需求总数</label><strong>-</strong></div>
+    </section>
+
+    <section class="toolbar">
+      <input class="input" id="searchInput" type="search" placeholder="搜索需求点、模块、接口人、备注..." />
+      <select class="select" id="versionFilter" aria-label="按版本筛选">
+        <option value="">全部版本</option>
+      </select>
+      <select class="select" id="statusFilter" aria-label="按状态筛选">
+        <option value="">全部状态</option>
+        <option value="未开始">未开始</option>
+        <option value="进行中">进行中</option>
+        <option value="已完成">已完成</option>
+      </select>
+      <select class="select" id="moduleFilter" aria-label="按模块筛选">
+        <option value="">全部模块</option>
+        <option value="流程治理">流程治理</option>
+        <option value="移动端">移动端</option>
+      </select>
+    </section>
+
+    <section class="view-switch" aria-label="需求展示方式">
+      <button class="view-btn active" type="button" data-view="table">表格</button>
+      <button class="view-btn" type="button" data-view="card">卡片</button>
+    </section>
+
+    <section class="list" id="requirementList">
+      <div class="table-wrap">
+        <table class="req-table" aria-label="需求加载占位">
+          <thead>
+            <tr><th>序号</th><th>需求点</th><th>需求类型</th><th>模块</th><th>接口/验收人</th><th>优先级</th><th>状态</th><th>详情</th></tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="8">正在加载需求明细...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <div class="empty" id="emptyState">没有匹配的需求，请调整筛选条件。</div>
+
+    <section class="tips">
+      当前页面读取 <code>data/versions.csv</code> 和 <code>data/requirements.csv</code>。后续你只需要维护 CSV，再通过 Git 提交即可；页面会自动按版本分组展示。
+    </section>
+  </main>
+
+  <script>
+    const DATA_PATHS = {
+      versions: "./data/versions.csv",
+      requirements: "./data/requirements.csv"
+    };
+
+    let versions = [];
+    let requirements = [];
+    let currentView = localStorage.getItem("requirementsView") || "table";
+
+    const releasePanel = document.getElementById("releasePanel");
+    const list = document.getElementById("requirementList");
+    const searchInput = document.getElementById("searchInput");
+    const versionFilter = document.getElementById("versionFilter");
+    const statusFilter = document.getElementById("statusFilter");
+    const moduleFilter = document.getElementById("moduleFilter");
+    const visibleCount = document.getElementById("visibleCount");
+    const emptyState = document.getElementById("emptyState");
+    const viewButtons = Array.from(document.querySelectorAll(".view-btn"));
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            cell += '"';
+            i += 1;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          row.push(cell);
+          cell = "";
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && next === '\n') i += 1;
+          row.push(cell);
+          if (row.some((value) => value.trim() !== "")) rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += char;
+        }
+      }
+
+      row.push(cell);
+      if (row.some((value) => value.trim() !== "")) rows.push(row);
+
+      const headers = rows.shift().map((header) => header.trim());
+      return rows.map((values) => Object.fromEntries(headers.map((header, index) => [header, (values[index] || "").trim()])));
+    }
+
+    async function loadCsv(path) {
+      const response = await fetch(path);
+      if (!response.ok) throw new Error(`无法读取 ${path}`);
+      return parseCsv(await response.text());
+    }
+
+    function normalizeLink(path) {
+      const value = String(path || "").trim();
+      if (!value) return "";
+      if (/^(https?:)?\/\//.test(value) || value.startsWith("./") || value.startsWith("#")) return value;
+      return `./${value}`;
+    }
+
+    function splitLinks(value, fallbackLabel) {
+      return String(value || "")
+        .split(";")
+        .map((href) => href.trim())
+        .filter(Boolean)
+        .map((href, index) => ({
+          href: normalizeLink(href),
+          label: index === 0 ? fallbackLabel : `${fallbackLabel}${index + 1}`
+        }));
+    }
+
+    function normalizeVersion(row) {
+      return {
+        id: row["版本ID"],
+        name: row["版本名称"],
+        status: row["版本状态"],
+        no: row["版本号"],
+        releaseDate: row["发版日"],
+        description: row["版本说明"]
+      };
+    }
+
+    function normalizeRequirement(row) {
+      const prdLinks = splitLinks(row["PRD链接"], "PRD 文档");
+      const prototypeLinks = splitLinks(row["原型链接"], "原型");
+      return {
+        versionId: row["版本ID"],
+        seq: row["序号"],
+        point: row["需求点"],
+        summary: row["需求说明"],
+        type: row["需求类型"],
+        module: row["模块"],
+        owner: row["业务接口/验收人"],
+        leadership: row["领导关注"],
+        priority: row["优先级"],
+        status: row["需求状态"],
+        remark: row["备注"],
+        backend: row["后端"],
+        frontend: row["前端"],
+        testing: row["测试"],
+        links: [...prdLinks, ...prototypeLinks]
+      };
+    }
+
+    function priorityClass(priority) {
+      return String(priority).includes("P0") ? "p0" : "p1";
+    }
+
+    function getVersion(versionId) {
+      return versions.find((version) => version.id === versionId) || {
+        id: versionId,
+        name: versionId || "未归属版本",
+        status: "未配置",
+        no: "-",
+        releaseDate: "-",
+        description: ""
+      };
+    }
+
+    function populateFilters() {
+      versionFilter.innerHTML = `<option value="">全部版本</option>` + versions.map((version) => `
+        <option value="${escapeHtml(version.id)}">${escapeHtml(version.name || version.id)}</option>
+      `).join("");
+
+      const modules = [...new Set(requirements.map((item) => item.module).filter(Boolean))];
+      moduleFilter.innerHTML = `<option value="">全部模块</option>` + modules.map((module) => `
+        <option value="${escapeHtml(module)}">${escapeHtml(module)}</option>
+      `).join("");
+
+      const statuses = [...new Set(requirements.map((item) => item.status).filter(Boolean))];
+      statusFilter.innerHTML = `<option value="">全部状态</option>` + statuses.map((status) => `
+        <option value="${escapeHtml(status)}">${escapeHtml(status)}</option>
+      `).join("");
+    }
+
+    function getDefaultVersionIdByDate(date = new Date()) {
+      const year = String(date.getFullYear()).slice(-2);
+      const month = date.getMonth() + 1;
+      const suffix = date.getDate() <= 15 ? "MA" : "MB";
+      const key = `${year}.${month}${suffix}`;
+      const matched = versions.find((version) => String(version.name || "").includes(key));
+      return matched ? matched.id : "";
+    }
+
+    function renderReleasePanel(items) {
+      const selectedVersionId = versionFilter.value;
+      const versionTitle = selectedVersionId ? getVersion(selectedVersionId).name : "全部版本需求池";
+      const versionMeta = selectedVersionId ? getVersion(selectedVersionId) : null;
+      const versionCount = new Set(items.map((item) => item.versionId)).size;
+
+      releasePanel.innerHTML = `
+        <div class="release-card">
+          <h2>${escapeHtml(versionTitle)}</h2>
+          <div class="release-meta">
+            <span>版本数：${escapeHtml(versionCount)}</span>
+            ${versionMeta ? `<span>版本号：${escapeHtml(versionMeta.no)}</span><span>版本状态：${escapeHtml(versionMeta.status)}</span><span>发版日：${escapeHtml(versionMeta.releaseDate)}</span>` : ""}
+          </div>
+        </div>
+        <div class="stat-card"><label>需求总数</label><strong>${escapeHtml(items.length)}</strong></div>
+      `;
+    }
+
+    function renderRequirementRow(item) {
+      const links = item.links.length ? item.links.map((link) => `
+        <a class="table-link" href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>
+      `).join("") : `<span class="point-summary">待补充</span>`;
+      const rowId = `detail-${escapeHtml(item.versionId)}-${escapeHtml(item.seq)}`;
+
+      return `
+        <tr class="main-row">
+          <td>${escapeHtml(item.seq)}</td>
+          <td>
+            <div class="point-title">${escapeHtml(item.point)}</div>
+            <div class="point-summary">${escapeHtml(item.summary)}</div>
+          </td>
+          <td>${escapeHtml(item.type)}</td>
+          <td><div class="module-text" title="${escapeHtml(item.module)}">${escapeHtml(item.module)}</div></td>
+          <td>${escapeHtml(item.owner)}</td>
+          <td><span class="badge ${priorityClass(item.priority)}">${escapeHtml(item.priority)}</span></td>
+          <td><span class="badge status">${escapeHtml(item.status)}</span></td>
+          <td><button class="detail-toggle" type="button" data-detail-target="${rowId}">详情</button></td>
+        </tr>
+        <tr class="detail-row" id="${rowId}" hidden>
+          <td colspan="8">
+            <div class="detail-panel">
+              <div class="detail-grid">
+                <div class="detail-item"><label>领导关注</label><div>${escapeHtml(item.leadership) || "-"}</div></div>
+                <div class="detail-item"><label>备注</label><div>${escapeHtml(item.remark) || "-"}</div></div>
+                <div class="detail-item"><label>后端</label><div>${escapeHtml(item.backend) || "-"}</div></div>
+                <div class="detail-item"><label>前端</label><div>${escapeHtml(item.frontend) || "-"}</div></div>
+                <div class="detail-item"><label>测试</label><div>${escapeHtml(item.testing) || "-"}</div></div>
+                <div class="detail-item"><label>资料</label><div class="table-links">${links}</div></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderRequirementCard(item) {
+      return `
+        <article class="req-card">
+          <div class="req-main">
+            <div>
+              <div class="req-title">
+                <span class="badge seq">#${escapeHtml(item.seq)}</span>
+                <h2>${escapeHtml(item.point)}</h2>
+                <span class="badge module">${escapeHtml(item.module)}</span>
+                <span class="badge ${priorityClass(item.priority)}">${escapeHtml(item.priority)}</span>
+                <span class="badge status">${escapeHtml(item.status)}</span>
+              </div>
+              <p class="summary">${escapeHtml(item.summary)}</p>
+            </div>
+            <div class="owner-box">
+              <div class="owner-line"><span>需求类型</span><span>${escapeHtml(item.type)}</span></div>
+              <div class="owner-line"><span>接口/验收人</span><span>${escapeHtml(item.owner)}</span></div>
+              <div class="owner-line"><span>领导关注</span><span>${escapeHtml(item.leadership)}</span></div>
+            </div>
+          </div>
+          <div class="req-detail">
+            <div>
+              <div class="task-grid">
+                <div class="task"><label>后端</label><div>${escapeHtml(item.backend)}</div></div>
+                <div class="task"><label>前端</label><div>${escapeHtml(item.frontend)}</div></div>
+                <div class="task"><label>测试</label><div>${escapeHtml(item.testing)}</div></div>
+              </div>
+              <div class="remark">${escapeHtml(item.remark)}</div>
+            </div>
+            <div class="asset-panel">
+              ${item.links.length ? item.links.map((link) => `
+                <a class="asset" href="${escapeHtml(link.href)}">
+                  <span>${escapeHtml(link.label)} →</span>
+                  <small>${escapeHtml(link.href)}</small>
+                </a>
+              `).join("") : `<div class="remark">暂无关联 PRD / 原型</div>`}
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderGroupTable(group) {
+      return `
+        <div class="table-wrap">
+          <table class="req-table" aria-label="${escapeHtml(group.version.name || group.version.id)}需求列表">
+            <thead>
+              <tr>
+                <th class="seq-col">序号</th>
+                <th class="point-col">需求点</th>
+                <th class="type-col">需求类型</th>
+                <th class="module-col">模块</th>
+                <th class="owner-col">接口/验收人</th>
+                <th class="priority-col">优先级</th>
+                <th class="status-col">状态</th>
+                <th class="detail-col">详情</th>
+              </tr>
+            </thead>
+            <tbody>${group.items.map(renderRequirementRow).join("")}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderGroupCards(group) {
+      return group.items.map(renderRequirementCard).join("");
+    }
+
+    function renderRequirements(items) {
+      const grouped = versions
+        .map((version) => ({ version, items: items.filter((item) => item.versionId === version.id) }))
+        .filter((group) => group.items.length > 0);
+
+      const unknownItems = items.filter((item) => !versions.some((version) => version.id === item.versionId));
+      if (unknownItems.length > 0) {
+        grouped.push({ version: getVersion(""), items: unknownItems });
+      }
+
+      viewButtons.forEach((button) => button.classList.toggle("active", button.dataset.view === currentView));
+
+      list.innerHTML = grouped.map((group) => `
+        <section class="version-section">
+          <div class="version-heading">
+            <div>
+              <h2>${escapeHtml(group.version.name || group.version.id)}</h2>
+              ${group.version.description ? `<p>${escapeHtml(group.version.description)}</p>` : ""}
+            </div>
+            <div class="version-heading-meta">
+              ${escapeHtml(group.version.no || "-")} · ${escapeHtml(group.version.status || "-")} · ${escapeHtml(group.version.releaseDate || "-")}
+            </div>
+          </div>
+          ${currentView === "card" ? renderGroupCards(group) : renderGroupTable(group)}
+        </section>
+      `).join("");
+
+      bindDetailButtons();
+    }
+
+    function bindDetailButtons() {
+      document.querySelectorAll(".detail-toggle").forEach((button) => {
+        button.addEventListener("click", () => {
+          const row = document.getElementById(button.dataset.detailTarget);
+          if (!row) return;
+          row.hidden = !row.hidden;
+          button.textContent = row.hidden ? "详情" : "收起";
+        });
+      });
+    }
+
+    function filterRequirements() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const versionId = versionFilter.value;
+      const status = statusFilter.value;
+      const module = moduleFilter.value;
+      const result = requirements.filter((item) => {
+        const text = [
+          item.versionId,
+          getVersion(item.versionId).name,
+          item.seq,
+          item.point,
+          item.summary,
+          item.type,
+          item.module,
+          item.owner,
+          item.leadership,
+          item.priority,
+          item.status,
+          item.remark,
+          item.backend,
+          item.frontend,
+          item.testing
+        ].join(" ").toLowerCase();
+        return (!keyword || text.includes(keyword)) &&
+          (!versionId || item.versionId === versionId) &&
+          (!status || item.status === status) &&
+          (!module || item.module === module);
+      });
+
+      renderReleasePanel(result);
+      renderRequirements(result);
+      visibleCount.textContent = result.length + " 条需求";
+      emptyState.style.display = result.length === 0 ? "block" : "none";
+    }
+
+    async function init() {
+      try {
+        const [versionRows, requirementRows] = await Promise.all([
+          loadCsv(DATA_PATHS.versions),
+          loadCsv(DATA_PATHS.requirements)
+        ]);
+        versions = versionRows.map(normalizeVersion);
+        requirements = requirementRows.map(normalizeRequirement);
+        populateFilters();
+        versionFilter.value = getDefaultVersionIdByDate();
+        filterRequirements();
+      } catch (error) {
+        releasePanel.innerHTML = `<div class="release-card"><h2>数据读取失败</h2><div class="release-meta"><span>${escapeHtml(error.message)}</span></div></div>`;
+        visibleCount.textContent = "0 条需求";
+      }
+    }
+
+    viewButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        currentView = button.dataset.view;
+        localStorage.setItem("requirementsView", currentView);
+        filterRequirements();
+      });
+    });
+
+    searchInput.addEventListener("input", filterRequirements);
+    versionFilter.addEventListener("change", filterRequirements);
+    statusFilter.addEventListener("change", filterRequirements);
+    moduleFilter.addEventListener("change", filterRequirements);
+    init();
+  </script>
+</body>
+</html>

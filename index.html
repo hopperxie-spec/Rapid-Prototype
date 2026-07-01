@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>快速原型预览</title>
+  <link rel="prefetch" href="requirements.html" />
+  <link rel="prefetch" href="data/versions.csv" />
+  <link rel="prefetch" href="data/requirements.csv" />
   <style>
     :root {
       --bg: #f5f7fb;
@@ -22,6 +25,12 @@
 
     * { box-sizing: border-box; }
 
+    html {
+      overflow-y: scroll;
+      scrollbar-gutter: stable;
+      background: var(--bg);
+    }
+
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
@@ -33,10 +42,78 @@
 
     a { color: inherit; text-decoration: none; }
 
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(229, 231, 235, 0.88);
+      background: rgba(248, 250, 252, 0.86);
+      backdrop-filter: blur(14px);
+    }
+
+    .top-nav-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      color: #1f2937;
+      font-weight: 900;
+    }
+
+    .nav-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), #0ea5e9);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
     .page {
       max-width: 1160px;
       margin: 0 auto;
-      padding: 56px 24px 72px;
+      padding: 42px 24px 72px;
     }
 
     .header {
@@ -292,6 +369,9 @@
 
     @media (max-width: 760px) {
       .page { padding: 34px 16px 48px; }
+      .top-nav-inner { padding: 12px 16px; align-items: flex-start; flex-direction: column; }
+      .nav-links { width: 100%; }
+      .nav-link { flex: 1; }
       .header { display: block; }
       .count { display: inline-flex; margin-top: 16px; }
       .title { font-size: 28px; }
@@ -303,6 +383,16 @@
 </head>
 
 <body>
+  <nav class="top-nav">
+    <div class="top-nav-inner">
+      <a class="nav-brand" href="index.html"><span class="nav-mark">灰</span><span>ToB 需求与原型资产库</span></a>
+      <div class="nav-links" aria-label="顶部导航">
+        <a class="nav-link" href="requirements.html">版本需求公示</a>
+        <a class="nav-link active" href="index.html">快速原型预览</a>
+      </div>
+    </div>
+  </nav>
+
   <main class="page">
     <header class="header">
       <div>
