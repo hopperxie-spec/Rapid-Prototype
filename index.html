@@ -349,17 +349,6 @@
       background: rgba(255, 255, 255, 0.62);
     }
 
-    .tips {
-      margin-top: 26px;
-      padding: 16px 18px;
-      border: 1px solid #e0e7ff;
-      border-radius: 16px;
-      background: rgba(238, 242, 255, 0.7);
-      color: #475569;
-      font-size: 13px;
-      line-height: 1.8;
-    }
-
     code {
       padding: 2px 6px;
       border-radius: 6px;
@@ -410,11 +399,6 @@
     <section class="version-list" id="versionList"></section>
 
     <div class="empty" id="emptyState">没有匹配的版本或原型，请换个关键词试试。</div>
-
-    <section class="tips">
-      维护方式：只需要修改页面底部脚本里的 <code>versions</code> 配置数组。新增版本时复制一个对象；对应 HTML 原型产出后，把该版本 <code>assets</code> 里的占位项改成带 <code>href</code> 的可点击项。
-      推荐文件命名：<code>项目名_V1.0_PRD.html</code>、<code>项目名_V1.0_原型.html</code>。
-    </section>
   </main>
 
   <script>
@@ -441,7 +425,8 @@
             type: "HTML",
             title: "V1.0 HTML 原型",
             desc: "查看全链路效能中心的交互原型，覆盖总览、链路分析、实例追踪、偏差检测、预警中心和规则配置等核心页面。",
-            href: "./ToB_全链路效能中心_V1.0_原型.html",
+            href: "./ToB_全链路效能中心_V1.0_原型.html?v=dir-link",
+            path: "./ToB_全链路效能中心_V1.0_原型.html",
             action: "打开原型 →"
           }
         ]
@@ -468,14 +453,44 @@
             type: "HOME",
             title: "V1.0 移动端首页原型",
             desc: "查看 ToB 移动端首页工作台原型，包含首页、业务、审批、应用、我的五个底部导航页面。",
-            href: "./ToB_移动端首页_V1.0_原型.html",
+            href: "./ToB_移动端首页_V1.0_原型.html?v=dir-link",
+            path: "./ToB_移动端首页_V1.0_原型.html",
             action: "打开原型 →"
           },
           {
             type: "FORM",
             title: "V1.0 移动端创建商机原型",
             desc: "查看移动端创建商机分步向导，覆盖基础信息、预估收入、团队成员、扩展信息、协同事项、拜访信息和确认提交。",
-            href: "./ToB_移动端创建商机_V1.0_原型.html",
+            href: "./ToB_移动端创建商机_V1.0_原型.html?v=dir-link",
+            path: "./ToB_移动端创建商机_V1.0_原型.html",
+            action: "打开原型 →"
+          }
+        ]
+      },
+      {
+        version: "V1.0",
+        title: "ToB 创建项目",
+        status: "原型 / 待补 PRD",
+        statusType: "draft",
+        date: "2026-07-03",
+        productManager: "谢慧源",
+        contacts: "王奕玮、孙文明",
+        summary: "围绕项目主档创建流程，覆盖基础信息、项目成员、项目详细信息、客户信息、合同信息、收入信息等抽屉式录入场景。",
+        keywords: "ToB 创建项目 项目信息 项目管理 合同信息 收入信息 HTML 原型 抽屉",
+        assets: [
+          {
+            type: "PRD",
+            title: "V1.0 PRD 文档",
+            desc: "该需求已收录到快速原型预览，PRD 文档待补充后可在此关联。",
+            action: "待补充",
+            disabled: true
+          },
+          {
+            type: "HTML",
+            title: "V1.0 创建项目原型",
+            desc: "查看创建项目抽屉式交互原型，覆盖项目信息维护、商机关联带入、合同明细、收入预估和必填校验。",
+            href: "./ToB_创建项目_V1.0_原型.html?v=dir-link",
+            path: "./ToB_创建项目_V1.0_原型.html",
             action: "打开原型 →"
           }
         ]

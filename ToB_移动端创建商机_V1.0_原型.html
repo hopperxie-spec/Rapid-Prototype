@@ -42,6 +42,8 @@
       display:flex;
       justify-content:center;
     }
+    .directory-link{position:fixed;left:max(14px,calc(50% - 201px));bottom:calc(94px + var(--safe-bottom));z-index:9999;height:36px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;border:1px solid #c9defa;border-radius:999px;background:rgba(255,255,255,.92);color:#174f9a;text-decoration:none;font-size:13px;font-weight:800;box-shadow:0 8px 22px rgba(22,44,78,.12);backdrop-filter:blur(10px)}
+    .directory-link:hover{background:#eef6ff}
     button,input,textarea{font:inherit}
     .phone{
       width:430px;
@@ -90,6 +92,7 @@
   </style>
 </head>
 <body>
+  <a class="directory-link" href="index.html">← 返回目录</a>
   <div class="phone">
     <header class="hero">
       <div class="statusbar"><span>9:41</span><div class="icons"><span>5G</span><span>▰▰▰</span><span class="battery"></span></div></div>

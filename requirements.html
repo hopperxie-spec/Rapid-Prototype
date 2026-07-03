@@ -471,16 +471,31 @@
     }
 
     .table-wrap {
-      overflow: auto;
+      overflow-x: auto;
+      overflow-y: hidden;
       border: 1px solid var(--border);
       border-radius: 14px;
       background: #fff;
       box-shadow: var(--shadow);
+      scrollbar-gutter: stable;
+    }
+
+    .table-wrap::-webkit-scrollbar {
+      height: 10px;
+    }
+
+    .table-wrap::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: #cbd5e1;
+    }
+
+    .table-wrap::-webkit-scrollbar-track {
+      background: #f1f5f9;
     }
 
     .req-table {
-      width: 100%;
-      min-width: 940px;
+      width: max-content;
+      min-width: 1760px;
       border-collapse: collapse;
       table-layout: fixed;
     }
@@ -493,7 +508,6 @@
       vertical-align: top;
       font-size: 13px;
       line-height: 1.55;
-      overflow: hidden;
     }
 
     .req-table th {
@@ -508,13 +522,17 @@
     }
 
     .req-table .seq-col { width: 54px; }
-    .req-table .point-col { width: 320px; }
+    .req-table .point-col { width: 300px; }
+    .req-table .summary-col { width: 220px; }
     .req-table .type-col { width: 96px; }
-    .req-table .module-col { width: 190px; }
+    .req-table .module-col { width: 220px; }
     .req-table .owner-col { width: 120px; }
-    .req-table .priority-col { width: 100px; }
+    .req-table .leadership-col { width: 100px; }
+    .req-table .priority-col { width: 86px; }
     .req-table .status-col { width: 96px; }
-    .req-table .detail-col { width: 104px; }
+    .req-table .remark-col { width: 220px; }
+    .req-table .task-col { width: 110px; }
+    .req-table .asset-col { width: 150px; }
 
     .point-title {
       font-weight: 900;
@@ -525,6 +543,13 @@
     .point-summary {
       color: var(--muted);
       font-size: 12px;
+    }
+
+    .table-text {
+      color: #344054;
+      font-size: 12px;
+      line-height: 1.55;
+      word-break: break-word;
     }
 
     .module-text {
@@ -638,6 +663,41 @@
       background: #f8fafc;
     }
 
+    .version-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .page-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-btn {
+      min-height: 32px;
+      min-width: 72px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0 12px;
+      background: #fff;
+      color: var(--primary-dark);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .page-btn:disabled {
+      cursor: not-allowed;
+      color: #98a2b3;
+      background: #f8fafc;
+    }
+
     .empty {
       display: none;
       padding: 24px;
@@ -646,17 +706,6 @@
       text-align: center;
       color: var(--muted);
       background: rgba(255, 255, 255, 0.62);
-    }
-
-    .tips {
-      margin-top: 24px;
-      padding: 16px 18px;
-      border: 1px solid #e0e7ff;
-      border-radius: 16px;
-      background: rgba(238, 242, 255, 0.7);
-      color: #475569;
-      font-size: 13px;
-      line-height: 1.8;
     }
 
     @media (max-width: 900px) {
@@ -736,19 +785,15 @@
       <div class="table-wrap">
         <table class="req-table" aria-label="需求加载占位">
           <thead>
-            <tr><th>序号</th><th>需求点</th><th>需求类型</th><th>模块</th><th>接口/验收人</th><th>优先级</th><th>状态</th><th>详情</th></tr>
+            <tr><th>序号</th><th>需求点</th><th>需求说明</th><th>需求类型</th><th>模块</th><th>接口/验收人</th><th>领导关注</th><th>优先级</th><th>状态</th><th>备注</th><th>后端</th><th>前端</th><th>测试</th><th>资料</th></tr>
           </thead>
           <tbody>
-            <tr><td colspan="8">正在加载需求明细...</td></tr>
+            <tr><td colspan="14">正在加载需求明细...</td></tr>
           </tbody>
         </table>
       </div>
     </section>
     <div class="empty" id="emptyState">没有匹配的需求，请调整筛选条件。</div>
-
-    <section class="tips">
-      当前页面读取 <code>data/versions.csv</code> 和 <code>data/requirements.csv</code>。后续你只需要维护 CSV，再通过 Git 提交即可；页面会自动按版本分组展示。
-    </section>
   </main>
 
   <script>
@@ -760,6 +805,8 @@
     let versions = [];
     let requirements = [];
     let currentView = localStorage.getItem("requirementsView") || "table";
+    let versionPages = {};
+    const PAGE_SIZE = 10;
 
     const releasePanel = document.getElementById("releasePanel");
     const list = document.getElementById("requirementList");
@@ -909,9 +956,13 @@
     function getDefaultVersionIdByDate(date = new Date()) {
       const year = String(date.getFullYear()).slice(-2);
       const month = date.getMonth() + 1;
-      const suffix = date.getDate() <= 15 ? "MA" : "MB";
-      const key = `${year}.${month}${suffix}`;
-      const matched = versions.find((version) => String(version.name || "").includes(key));
+      const isMidMonth = date.getDate() <= 15;
+      const oldKey = `${year}.${month}${isMidMonth ? "MA" : "MB"}`;
+      const newKey = `${year}年${month}月${isMidMonth ? "中" : "底"}版本`;
+      const matched = versions.find((version) => {
+        const name = String(version.name || "");
+        return name.includes(newKey) || name.includes(oldKey);
+      });
       return matched ? matched.id : "";
     }
 
@@ -937,35 +988,25 @@
       const links = item.links.length ? item.links.map((link) => `
         <a class="table-link" href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>
       `).join("") : `<span class="point-summary">待补充</span>`;
-      const rowId = `detail-${escapeHtml(item.versionId)}-${escapeHtml(item.seq)}`;
 
       return `
         <tr class="main-row">
           <td>${escapeHtml(item.seq)}</td>
           <td>
             <div class="point-title">${escapeHtml(item.point)}</div>
-            <div class="point-summary">${escapeHtml(item.summary)}</div>
           </td>
+          <td><div class="table-text">${escapeHtml(item.summary) || "-"}</div></td>
           <td>${escapeHtml(item.type)}</td>
           <td><div class="module-text" title="${escapeHtml(item.module)}">${escapeHtml(item.module)}</div></td>
           <td>${escapeHtml(item.owner)}</td>
+          <td>${escapeHtml(item.leadership) || "-"}</td>
           <td><span class="badge ${priorityClass(item.priority)}">${escapeHtml(item.priority)}</span></td>
           <td><span class="badge status">${escapeHtml(item.status)}</span></td>
-          <td><button class="detail-toggle" type="button" data-detail-target="${rowId}">详情</button></td>
-        </tr>
-        <tr class="detail-row" id="${rowId}" hidden>
-          <td colspan="8">
-            <div class="detail-panel">
-              <div class="detail-grid">
-                <div class="detail-item"><label>领导关注</label><div>${escapeHtml(item.leadership) || "-"}</div></div>
-                <div class="detail-item"><label>备注</label><div>${escapeHtml(item.remark) || "-"}</div></div>
-                <div class="detail-item"><label>后端</label><div>${escapeHtml(item.backend) || "-"}</div></div>
-                <div class="detail-item"><label>前端</label><div>${escapeHtml(item.frontend) || "-"}</div></div>
-                <div class="detail-item"><label>测试</label><div>${escapeHtml(item.testing) || "-"}</div></div>
-                <div class="detail-item"><label>资料</label><div class="table-links">${links}</div></div>
-              </div>
-            </div>
-          </td>
+          <td><div class="table-text">${escapeHtml(item.remark) || "-"}</div></td>
+          <td>${escapeHtml(item.backend) || "-"}</td>
+          <td>${escapeHtml(item.frontend) || "-"}</td>
+          <td>${escapeHtml(item.testing) || "-"}</td>
+          <td><div class="table-links">${links}</div></td>
         </tr>
       `;
     }
@@ -1020,12 +1061,18 @@
               <tr>
                 <th class="seq-col">序号</th>
                 <th class="point-col">需求点</th>
+                <th class="summary-col">需求说明</th>
                 <th class="type-col">需求类型</th>
                 <th class="module-col">模块</th>
                 <th class="owner-col">接口/验收人</th>
+                <th class="leadership-col">领导关注</th>
                 <th class="priority-col">优先级</th>
                 <th class="status-col">状态</th>
-                <th class="detail-col">详情</th>
+                <th class="remark-col">备注</th>
+                <th class="task-col">后端</th>
+                <th class="task-col">前端</th>
+                <th class="task-col">测试</th>
+                <th class="asset-col">资料</th>
               </tr>
             </thead>
             <tbody>${group.items.map(renderRequirementRow).join("")}</tbody>
@@ -1038,6 +1085,42 @@
       return group.items.map(renderRequirementCard).join("");
     }
 
+    function getGroupPageKey(group) {
+      return group.version.id || "unknown";
+    }
+
+    function getPagedGroup(group) {
+      const pageKey = getGroupPageKey(group);
+      const totalPages = Math.max(1, Math.ceil(group.items.length / PAGE_SIZE));
+      const currentPage = Math.min(versionPages[pageKey] || 1, totalPages);
+      versionPages[pageKey] = currentPage;
+      const start = (currentPage - 1) * PAGE_SIZE;
+      return {
+        ...group,
+        pageKey,
+        currentPage,
+        totalPages,
+        totalItems: group.items.length,
+        start,
+        items: group.items.slice(start, start + PAGE_SIZE)
+      };
+    }
+
+    function renderGroupPagination(group) {
+      if (group.totalItems <= PAGE_SIZE) return "";
+      const start = group.start + 1;
+      const end = Math.min(group.start + PAGE_SIZE, group.totalItems);
+      return `
+        <div class="version-pagination" data-page-key="${escapeHtml(group.pageKey)}">
+          <div>第 ${escapeHtml(group.currentPage)} / ${escapeHtml(group.totalPages)} 页 · ${escapeHtml(start)}-${escapeHtml(end)} / ${escapeHtml(group.totalItems)} 条</div>
+          <div class="page-actions">
+            <button class="page-btn" type="button" data-page-action="prev" ${group.currentPage <= 1 ? "disabled" : ""}>上一页</button>
+            <button class="page-btn" type="button" data-page-action="next" ${group.currentPage >= group.totalPages ? "disabled" : ""}>下一页</button>
+          </div>
+        </div>
+      `;
+    }
+
     function renderRequirements(items) {
       const grouped = versions
         .map((version) => ({ version, items: items.filter((item) => item.versionId === version.id) }))
@@ -1048,9 +1131,10 @@
         grouped.push({ version: getVersion(""), items: unknownItems });
       }
 
+      const pagedGroups = grouped.map(getPagedGroup);
       viewButtons.forEach((button) => button.classList.toggle("active", button.dataset.view === currentView));
 
-      list.innerHTML = grouped.map((group) => `
+      list.innerHTML = pagedGroups.map((group) => `
         <section class="version-section">
           <div class="version-heading">
             <div>
@@ -1062,10 +1146,25 @@
             </div>
           </div>
           ${currentView === "card" ? renderGroupCards(group) : renderGroupTable(group)}
+          ${renderGroupPagination(group)}
         </section>
       `).join("");
 
       bindDetailButtons();
+      bindVersionPagination();
+    }
+
+    function bindVersionPagination() {
+      document.querySelectorAll(".version-pagination .page-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          const pageBox = button.closest(".version-pagination");
+          if (!pageBox) return;
+          const pageKey = pageBox.dataset.pageKey;
+          const direction = button.dataset.pageAction === "next" ? 1 : -1;
+          versionPages[pageKey] = Math.max(1, (versionPages[pageKey] || 1) + direction);
+          filterRequirements();
+        });
+      });
     }
 
     function bindDetailButtons() {
@@ -1135,14 +1234,20 @@
       button.addEventListener("click", () => {
         currentView = button.dataset.view;
         localStorage.setItem("requirementsView", currentView);
+        versionPages = {};
         filterRequirements();
       });
     });
 
-    searchInput.addEventListener("input", filterRequirements);
-    versionFilter.addEventListener("change", filterRequirements);
-    statusFilter.addEventListener("change", filterRequirements);
-    moduleFilter.addEventListener("change", filterRequirements);
+    function resetPageAndFilter() {
+      versionPages = {};
+      filterRequirements();
+    }
+
+    searchInput.addEventListener("input", resetPageAndFilter);
+    versionFilter.addEventListener("change", resetPageAndFilter);
+    statusFilter.addEventListener("change", resetPageAndFilter);
+    moduleFilter.addEventListener("change", resetPageAndFilter);
     init();
   </script>
 </body>

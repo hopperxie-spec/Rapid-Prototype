@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>创建项目 - 抽屉式原型</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --line:#e6edf5;
+      --line-strong:#d7e2ef;
+      --text:#1f2d3d;
+      --muted:#7b8ca4;
+      --soft:#f8fbff;
+      --blue:#174f9a;
+      --blue-2:#2b6cb8;
+      --blue-soft:#eef6ff;
+      --red:#ff4d4f;
+      --orange:#faad14;
+      --green:#20b486;
+      --shadow:0 12px 36px rgba(22,44,78,.12);
+      --radius:12px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;background:#eef3f8;color:var(--text);}
+    .directory-link{position:fixed;left:18px;bottom:18px;z-index:9999;height:36px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;border:1px solid #c9defa;border-radius:999px;background:rgba(255,255,255,.92);color:#174f9a;text-decoration:none;font-size:13px;font-weight:800;box-shadow:0 8px 22px rgba(22,44,78,.12);backdrop-filter:blur(10px)}
+    .directory-link:hover{background:#eef6ff}
+    .workspace{height:100vh;overflow:hidden;position:relative;background:linear-gradient(180deg,#f6f9fd,#edf3f9)}
+    .topbar{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 24px;gap:14px;position:relative;z-index:0}
+    .logo{width:32px;height:32px;border-radius:10px;background:#174f9a;color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+    .brand{font-weight:700;font-size:16px}.tag{border:1px solid #f4c46b;background:#fff9eb;color:#b17400;border-radius:6px;padding:3px 7px;font-size:12px}.slogan{color:#9aa8b8;font-size:12px}.top-spacer{flex:1}.workbench{color:#74859c;font-size:13px}
+    .layout{display:flex;height:calc(100vh - 56px)}
+    .sidebar{width:244px;background:#fff;border-right:1px solid var(--line);padding:18px 10px;overflow:hidden}
+    .menu-title{color:#6c7e95;font-size:13px;margin:14px 12px 8px}.menu-item{height:36px;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:8px;color:#476078;font-size:14px}.menu-item.active{background:#eaf2ff;color:#174f9a;font-weight:700}.menu-item .dot{width:8px;height:8px;border-radius:50%;background:#adc2d9}.main{flex:1;padding:18px 22px;overflow:hidden}.tabs{display:flex;gap:10px}.tab{height:34px;padding:0 18px;border:1px solid var(--line);background:#fff;border-radius:8px;display:flex;align-items:center;color:#596f88;font-size:13px}.tab.active{color:#174f9a;background:#eaf2ff;border-color:#c9defa}.fake-card{margin-top:16px;height:calc(100vh - 130px);border:1px solid var(--line);background:#fff;border-radius:14px;padding:20px}.filter-row{display:flex;gap:14px;margin-bottom:18px}.fake-input{height:34px;border:1px solid var(--line);background:#f8fafc;border-radius:8px;width:220px}.fake-table{border-top:1px solid var(--line)}.fake-tr{height:54px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:42px 90px 120px 140px 130px 1fr;align-items:center;color:#74859c;font-size:12px}.mask{position:absolute;inset:0;background:rgba(8,14,24,.48);z-index:3}
+
+    .drawer{position:absolute;right:0;top:0;height:100vh;width:55vw;min-width:1080px;background:var(--bg);box-shadow:-12px 0 40px rgba(0,0,0,.18);z-index:5;display:flex;flex-direction:column;border-left:1px solid #dfe8f4}.drawer-header{height:54px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:14px;flex-shrink:0}.drawer-title{font-weight:800;color:#162941;font-size:16px;margin-right:10px}.header-btn{height:30px;border:1px solid #b9cdeb;background:#f8fbff;color:#174f9a;border-radius:6px;padding:0 12px;font-weight:700;font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer}.header-btn:hover{background:#eef6ff}.header-right{margin-left:auto;display:flex;align-items:center;gap:12px}.icon-btn{height:30px;width:32px;border:1px solid var(--line-strong);background:#fff;border-radius:6px;color:#55708f;display:grid;place-items:center;cursor:pointer}.density{display:flex;background:#f3f7fc;border:1px solid var(--line);border-radius:7px;padding:2px}.density button{border:0;background:transparent;color:#6c7e95;padding:4px 9px;border-radius:5px;cursor:pointer;font-size:12px}.density button.active{background:#fff;color:#174f9a;font-weight:800;box-shadow:0 1px 2px rgba(20,55,95,.08)}.close{font-size:18px;color:#677f99;line-height:1}
+    .drawer-body{flex:1;display:flex;min-height:0}.step-rail{width:184px;background:#fff;border-right:1px solid var(--line);padding:22px 16px 16px;flex-shrink:0;display:flex;flex-direction:column}.step{display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:10px;cursor:pointer;position:relative;margin-bottom:4px}.step:hover{background:#f5f9ff}.step.active{background:#eef6ff}.step-index{width:28px;height:28px;border-radius:50%;background:#edf3fa;color:#8194ad;display:grid;place-items:center;font-weight:800;font-size:12px;flex-shrink:0}.step.active .step-index{background:#174f9a;color:#fff}.step-name{font-size:13px;color:#60758e;font-weight:700}.step.active .step-name{color:#174f9a}.step-required{margin-left:auto;width:6px;height:6px;border-radius:50%;background:#ff4d4f}.step-divider{height:1px;background:var(--line);margin:14px 0}.required-box{height:34px;border:1px solid #ffd48b;background:#fff8e8;color:#c77b00;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;gap:8px}.required-box .red-dot{width:7px;height:7px;border-radius:50%;background:#ff4d4f}
+    .content{flex:1;min-width:0;overflow:auto;padding:24px 24px 84px;background:var(--bg);scroll-behavior:smooth}.section{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:16px;box-shadow:0 1px 2px rgba(20,55,95,.03);overflow:hidden}.section-head{height:48px;display:flex;align-items:center;border-bottom:1px solid var(--line);padding:0 16px;background:linear-gradient(180deg,#fff,#fbfdff);position:sticky;top:-24px;z-index:2}.bar{width:4px;height:24px;border-radius:5px;background:#174f9a;margin-right:12px}.section-title{font-size:16px;font-weight:850;color:#1f2d3d}.section-subtitle{font-size:12px;color:#8798ad;margin-left:10px}.section-actions{margin-left:auto;display:flex;align-items:center;gap:8px}.link-btn{border:0;background:transparent;color:#174f9a;font-weight:700;font-size:12px;cursor:pointer}.section-body{padding:16px}.grid{display:grid;gap:14px 18px}.grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.field{min-width:0}.field.full{grid-column:1/-1}.label{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#53667e;margin-bottom:8px}.required:before{content:"*";color:var(--red);font-weight:900}.hint{font-weight:400;color:#9aa9ba}.input,.select,.textarea{width:100%;border:1px solid var(--line-strong);border-radius:8px;background:#fff;color:#26384d;font-size:13px;outline:none}.input,.select{height:36px;padding:0 12px}.input.readonly{background:#f7f9fc;color:#8a9bb0}.textarea{min-height:92px;padding:12px;resize:vertical;line-height:1.7}.textarea.tall{min-height:126px}.select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#91a2b8 50%),linear-gradient(135deg,#91a2b8 50%,transparent 50%);background-position:calc(100% - 17px) 15px,calc(100% - 12px) 15px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}.with-search{position:relative}.with-search .input{padding-right:58px}.choose{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:800;color:#174f9a;cursor:pointer}.radio-row,.check-row{height:36px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.pill-radio{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);border-radius:18px;padding:7px 12px;color:#526980;background:#fff;font-size:12px;cursor:pointer}.pill-radio.active{border-color:#9fc2ee;background:#eef6ff;color:#174f9a;font-weight:800}.info-block{border:1px dashed #c9d8ea;background:#fbfdff;border-radius:10px;padding:12px 14px;color:#6e8198;font-size:12px;line-height:1.8}.split-title{grid-column:1/-1;margin:2px 0 -2px;display:flex;align-items:center;gap:8px;color:#174f9a;font-size:13px;font-weight:850}.split-title:before{content:"";width:4px;height:14px;border-radius:4px;background:#8db5e8}.divider{grid-column:1/-1;height:1px;background:#edf2f7;margin:2px 0}.table-wrap{border:1px solid var(--line);border-radius:10px;overflow:auto;background:#fff}.table{border-collapse:separate;border-spacing:0;min-width:100%;width:max-content}.table th,.table td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;font-size:12px;white-space:nowrap;height:36px}.table th{background:#f4f8fd;color:#536980;font-weight:850}.table tr:last-child td{border-bottom:0}.table th:last-child,.table td:last-child{border-right:0}.table td{color:#455c73;background:#fff}.table .input{height:30px;min-width:120px}.table .money{min-width:140px}.table .sticky-left{position:sticky;left:0;z-index:1;background:#fff}.table th.sticky-left{background:#f4f8fd;z-index:2}.group-head th{text-align:center;background:#eef5ff;color:#174f9a}.empty-note{padding:18px;text-align:center;color:#9aa9ba;font-size:12px}.upload-box{border:1px dashed #b9cdeb;background:#fbfdff;border-radius:12px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:16px}.upload-main{display:flex;align-items:center;gap:12px}.upload-icon{width:38px;height:38px;border-radius:12px;background:#eef6ff;color:#174f9a;display:grid;place-items:center;font-size:18px}.upload-title{font-weight:850;font-size:13px}.upload-desc{font-size:12px;color:#8798ad;margin-top:4px}.tag-mini{display:inline-flex;height:22px;align-items:center;padding:0 8px;background:#eef6ff;color:#174f9a;border-radius:6px;font-size:12px;font-weight:700}.warning{border:1px solid #ffe0a3;background:#fff9ed;color:#946200;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6}.footer{height:58px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0}.footer .status{margin-right:auto;font-size:12px;color:#67819c;display:flex;align-items:center;gap:7px}.footer .status:before{content:"";width:8px;height:8px;border-radius:50%;background:#5ed0a8}.btn{height:34px;border-radius:8px;border:1px solid var(--line-strong);background:#fff;color:#526b86;font-weight:800;font-size:13px;padding:0 16px;cursor:pointer}.btn.primary{background:#174f9a;border-color:#174f9a;color:#fff}.btn.ghost-blue{border-color:#a9c6ec;background:#f6faff;color:#174f9a}.btn:hover{filter:brightness(.98)}.drawer.tip-wide{width:72vw}.toast{position:fixed;right:28px;bottom:78px;background:#162941;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);font-size:13px;opacity:0;transform:translateY(8px);transition:.2s;z-index:9}.toast.show{opacity:1;transform:translateY(0)}
+    @media(max-width:1260px){.drawer{width:100vw;min-width:0}.mask{display:none}.grid.cols-4,.grid.cols-3{grid-template-columns:repeat(2,minmax(0,1fr))}.step-rail{width:168px}.content{padding-right:18px}}
+  
+
+    /* 收入信息表：保留一张原始明细表，仅修复表头、列宽、横向滚动和固定操作列 */
+    .revenue-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+    .mini-select{height:30px;border:1px solid var(--line-strong);border-radius:7px;background:#fff;color:#53667e;font-size:12px;padding:0 28px 0 10px;outline:none}
+    .revenue-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
+    .rev-card{border:1px solid var(--line);background:linear-gradient(180deg,#fbfdff,#fff);border-radius:10px;padding:10px 12px;min-width:0}
+    .rev-card .k{font-size:12px;color:#7f8fa4;margin-bottom:6px}.rev-card .v{font-size:18px;font-weight:850;color:#174f9a}.rev-card .s{font-size:12px;color:#9aa9ba;margin-left:4px}
+    .table-wrap.revenue-scroll{border-radius:10px;border-top:1px solid var(--line);max-height:560px;overflow:auto;position:relative}
+    .table.revenue-master{min-width:5050px;width:max-content;table-layout:fixed}
+    .revenue-master th,.revenue-master td{vertical-align:middle;padding:8px 8px;text-align:left;background:#fff;line-height:1.35}
+    .revenue-master thead th{position:sticky;top:0;z-index:3;background:#f4f8fd;box-shadow:inset 0 -1px 0 var(--line)}
+    .revenue-master thead tr.group-head th{top:0;background:#eef5ff;color:#174f9a;text-align:center;height:34px}
+    .revenue-master thead tr.sub-head th{top:34px;background:#f4f8fd;color:#536980;height:40px;text-align:center}
+    .revenue-master th.seq,.revenue-master td.seq{position:sticky;left:0;width:54px;text-align:center;color:#7c8ea6;background:#fbfdff;z-index:4}
+    .revenue-master thead th.seq{z-index:6;background:#f4f8fd}
+    .revenue-master .op-col{position:sticky;right:0;width:86px;text-align:center;background:#fff;z-index:4;box-shadow:-8px 0 14px rgba(20,55,95,.07)}
+    .revenue-master thead .op-col{z-index:6;background:#f4f8fd}
+    .revenue-master .code{width:160px}.revenue-master .product{width:210px}.revenue-master .history{width:150px}.revenue-master .metric{width:150px}
+    .revenue-master .money-col{width:150px}.revenue-master .wide-money{width:230px}.revenue-master .month-col{width:105px;text-align:right}
+    .revenue-master .month-group{background:#f0f8ff!important;color:#174f9a!important}.revenue-master .book-group{background:#f8fbff!important;color:#174f9a!important}
+    .revenue-master .input,.revenue-master .select{height:30px;font-size:12px;min-width:0;width:100%;padding:0 8px;vertical-align:middle}
+    .revenue-master thead th[rowspan="2"]{height:74px;vertical-align:middle}
+    .revenue-master tbody td{height:44px}
+    .revenue-master .money{text-align:right}.revenue-master tbody tr:hover td{background:#fbfdff}.revenue-master tbody tr:hover td.op-col,.revenue-master tbody tr:hover td.seq{background:#f7fbff}
+    .table-tip{display:flex;align-items:center;gap:8px;margin-top:8px;color:#8798ad;font-size:12px;line-height:1.6}.table-tip:before{content:"";width:6px;height:6px;border-radius:50%;background:#8db5e8;flex-shrink:0}
+    @media (max-width:1280px){.table.revenue-master{min-width:4900px}}
+</style>
+</head>
+<body>
+  <a class="directory-link" href="index.html">← 返回目录</a>
+  <div class="workspace">
+    <div class="topbar">
+      <div class="logo">ToB</div><div class="brand">和商智联</div><div class="tag">Demo</div><div class="slogan">仅演示效果，最终以实际上线效果为准</div><div class="top-spacer"></div><div class="workbench">工作台</div>
+    </div>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="menu-title">业务链路</div><div class="menu-item"><span class="dot"></span>业务链路</div>
+        <div class="menu-title">客户管理</div><div class="menu-item"><span class="dot"></span>客户信息</div><div class="menu-item"><span class="dot"></span>AI识客</div><div class="menu-item"><span class="dot"></span>拜访登记</div>
+        <div class="menu-title">线索管理</div><div class="menu-item"><span class="dot"></span>线索信息</div>
+        <div class="menu-title">商机管理</div><div class="menu-item"><span class="dot"></span>商机信息</div>
+        <div class="menu-title">项目管理</div><div class="menu-item active"><span class="dot"></span>项目信息</div><div class="menu-item"><span class="dot"></span>合同信息</div>
+        <div class="menu-title">交付管理</div><div class="menu-item"><span class="dot"></span>POC/交付信息</div>
+      </aside>
+      <main class="main">
+        <div class="tabs"><div class="tab">首页</div><div class="tab">业务链路</div><div class="tab">客户信息</div><div class="tab">待我审批</div><div class="tab">线索信息</div><div class="tab">商机信息</div><div class="tab active">项目信息</div></div>
+        <div class="fake-card">
+          <div class="filter-row"><div class="fake-input"></div><div class="fake-input"></div><div class="fake-input"></div></div>
+          <div class="fake-table"><div class="fake-tr"><b></b><b>序号</b><b>报送人</b><b>项目编码</b><b>项目名称</b><b>客户名称</b></div><div class="fake-tr"><span></span><span>1</span><span>谢慧源</span><span>PRJ2026070001</span><span>某省行业消息升级项目</span><span>阿里巴巴（中国）有限公司</span></div></div>
+        </div>
+      </main>
+    </div>
+    <div class="mask"></div>
+    <section class="drawer" id="drawer">
+      <header class="drawer-header">
+        <div class="drawer-title">创建项目</div>
+        <button class="header-btn" onclick="toast('已根据关联商机尝试带入客户、产品、收入信息')">✦ AI助填</button>
+        <button class="header-btn" onclick="toast('已打开商机快速关联面板')">↯ 商机关联带入</button>
+        <div class="header-right">
+          <button class="icon-btn" title="宽屏" onclick="toggleWide()">⇱</button>
+          <div class="density" id="density">
+            <button data-cols="1">1列</button><button data-cols="2" class="active">2列</button><button data-cols="3">3列</button><button data-cols="4">4列</button>
+          </div>
+          <button class="icon-btn close" title="关闭">×</button>
+        </div>
+      </header>
+      <div class="drawer-body">
+        <nav class="step-rail">
+          <div class="step active" data-target="basic"><div class="step-index">1</div><div class="step-name">基础信息</div><i class="step-required"></i></div>
+          <div class="step" data-target="members"><div class="step-index">2</div><div class="step-name">项目成员</div><i class="step-required"></i></div>
+          <div class="step" data-target="detail"><div class="step-index">3</div><div class="step-name">项目详细信息</div><i class="step-required"></i></div>
+          <div class="step" data-target="customer"><div class="step-index">4</div><div class="step-name">客户信息</div><i class="step-required"></i></div>
+          <div class="step" data-target="contract"><div class="step-index">5</div><div class="step-name">合同信息</div></div>
+          <div class="step" data-target="revenue"><div class="step-index">6</div><div class="step-name">收入信息</div><i class="step-required"></i></div>
+          <div class="step-divider"></div>
+          <div class="required-box"><span class="red-dot"></span><span id="missingCount">28 项必填未填</span></div>
+        </nav>
+        <main class="content" id="content">
+          <section class="section" id="basic">
+            <div class="section-head"><div class="bar"></div><div class="section-title">基础信息</div><div class="section-subtitle">创建项目主档，用于后续合同、收入、交付等数据串联</div></div>
+            <div class="section-body">
+              <div class="grid cols-2 form-grid">
+                <div class="field"><label class="label required">项目编码 <span class="hint">系统生成</span></label><input class="input readonly" value="保存后自动生成" readonly /></div>
+                <div class="field"><label class="label required">项目名称</label><input class="input required-field" placeholder="请输入项目名称" /></div>
+                <div class="field"><label class="label required">报送部门</label><select class="select required-field"><option value="">请选择报送部门</option><option>市场经营部</option><option>政企客户部</option><option>行业解决方案部</option></select></div>
+                <div class="field"><label class="label required">报送科室</label><select class="select required-field"><option value="">请选择报送科室</option><option>销售一室</option><option>行业拓展室</option><option>产品运营室</option></select></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="members">
+            <div class="section-head"><div class="bar"></div><div class="section-title">项目成员</div><div class="section-subtitle">明确项目全生命周期责任人</div></div>
+            <div class="section-body">
+              <div class="grid cols-2 form-grid">
+                <div class="field with-search"><label class="label required">项目服务经理</label><input class="input required-field" placeholder="请选择项目服务经理" /><span class="choose">选择</span></div>
+                <div class="field with-search"><label class="label required">客户经理</label><input class="input required-field" placeholder="请选择客户经理" /><span class="choose">选择</span></div>
+                <div class="field with-search"><label class="label">解决方案经理</label><input class="input" placeholder="请选择解决方案经理" /><span class="choose">选择</span></div>
+                <div class="field with-search"><label class="label">交付经理</label><input class="input" placeholder="请选择交付经理" /><span class="choose">选择</span></div>
+                <div class="field with-search"><label class="label">商务经理</label><input class="input" placeholder="请选择商务经理" /><span class="choose">选择</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="detail">
+            <div class="section-head"><div class="bar"></div><div class="section-title">项目详细信息</div><div class="section-subtitle">产品、状态、属性、场景标签等项目经营口径</div><div class="section-actions"><button class="link-btn" onclick="toast('已同步关联商机的项目属性')">同步商机信息</button></div></div>
+            <div class="section-body">
+              <div class="grid cols-2 form-grid">
+                <div class="split-title">产品与商机关联</div>
+                <div class="field"><label class="label required">VRM产品</label><select class="select required-field"><option value="">选择 V / R / M 产品（可多选，可只选到 V 或 R）</option><option>消息 / 5G行业消息（含阅信）</option><option>通话 / 中间号能力</option><option>号 / 企业码号服务</option></select></div>
+                <div class="field"><label class="label">V产品（历史）</label><input class="input" placeholder="历史V产品，关联商机或历史数据带入" /></div>
+                <div class="field"><label class="label">R产品（历史）</label><input class="input" placeholder="历史R产品，关联商机或历史数据带入" /></div>
+                <div class="field"><label class="label">M产品（历史）</label><input class="input" placeholder="历史M产品，关联商机或历史数据带入" /></div>
+                <div class="field"><label class="label required">项目类型</label><select class="select required-field"><option value="">请选择项目类型</option><option>新增项目</option><option>续签项目</option><option>框架项目</option><option>生态合作项目</option></select></div>
+                <div class="field with-search"><label class="label">关联商机编码</label><input class="input" placeholder="请选择关联商机编码" /><span class="choose">选择</span></div>
+                <div class="field"><label class="label required">列账收入类型</label><select class="select required-field"><option value="">请选择列账收入类型</option><option>收入类</option><option>成本/分成类</option><option>收入+成本/分成</option></select></div>
+                <div class="field"><label class="label">转化商机编码</label><input class="input readonly" placeholder="商机转项目时自动带入" readonly /></div>
+
+                <div class="divider"></div><div class="split-title">进展与状态</div>
+                <div class="field"><label class="label required">是否存在重大异常</label><div class="radio-row"><span class="pill-radio active">否</span><span class="pill-radio">是</span></div></div>
+                <div class="field"><label class="label">续签评估</label><select class="select"><option>请选择续签评估</option><option>高概率续签</option><option>存在风险</option><option>不续签</option><option>无需续签</option></select></div>
+                <div class="field full"><label class="label">历史重大进展</label><textarea class="textarea" placeholder="请输入历史重大进展，可由历史项目或关联商机带入"></textarea></div>
+                <div class="field full"><label class="label required">项目重大进展</label><textarea class="textarea required-field" placeholder="请描述项目当前重大进展、风险及下一步计划"></textarea></div>
+                <div class="field"><label class="label required">项目起始时间</label><input type="date" class="input required-field" /></div>
+                <div class="field"><label class="label required">项目起始时间填入方式</label><select class="select required-field"><option value="">请选择填入方式</option><option>手工填写</option><option>商机转化带入</option><option>合同解析带入</option></select></div>
+                <div class="field with-search"><label class="label">关联项目编码</label><input class="input" placeholder="请选择关联项目编码" /><span class="choose">选择</span></div>
+                <div class="field"><label class="label required">项目合作状态</label><select class="select required-field"><option value="">请选择项目合作状态</option><option>合作跟进</option><option>合同签署中</option><option>交付中</option><option>已上线</option><option>项目完成</option><option>项目退出</option></select></div>
+
+                <div class="divider"></div><div class="split-title">部门与交付属性</div>
+                <div class="field"><label class="label">销点部门线条</label><select class="select"><option>请选择销点部门线条</option><option>市场线</option><option>政企线</option><option>产品线</option></select></div>
+                <div class="field"><label class="label">销点部门</label><select class="select"><option>请选择销点部门</option><option>广东省公司</option><option>浙江省公司</option><option>集团客户部</option></select></div>
+                <div class="field"><label class="label">项目转化时间</label><input type="date" class="input" /></div>
+                <div class="field"><label class="label required">项目交付类型</label><select class="select required-field"><option value="">请选择项目交付类型</option><option>标准交付</option><option>定制化交付</option><option>POC转交付</option><option>纯合同收入项目</option></select></div>
+                <div class="field"><label class="label">是否涉密</label><div class="radio-row"><span class="pill-radio active">否</span><span class="pill-radio">是</span></div></div>
+                <div class="field"><label class="label">是否DICT项目</label><div class="radio-row"><span class="pill-radio active">否</span><span class="pill-radio">是</span></div></div>
+                <div class="field"><label class="label">是否为生态合作</label><div class="radio-row"><span class="pill-radio active">否</span><span class="pill-radio">是</span></div></div>
+                <div class="field"><label class="label">是否新方案</label><div class="radio-row"><span class="pill-radio active">否</span><span class="pill-radio">是</span></div></div>
+                <div class="field"><label class="label">是否新场景</label><div class="radio-row"><span class="pill-radio active">否</span><span class="pill-radio">是</span></div></div>
+                <div class="field"><label class="label">是否出海</label><div class="radio-row"><span class="pill-radio active">否</span><span class="pill-radio">是</span></div></div>
+                <div class="field"><label class="label">是否包含境外佣金</label><div class="radio-row"><span class="pill-radio active">否</span><span class="pill-radio">是</span></div></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="customer">
+            <div class="section-head"><div class="bar"></div><div class="section-title">客户信息</div><div class="section-subtitle">支持从商机、客户主数据、合同解析结果带入</div><div class="section-actions"><button class="link-btn" onclick="toast('已从客户主数据同步客户层级信息')">同步客户主数据</button></div></div>
+            <div class="section-body">
+              <div class="grid cols-2 form-grid">
+                <div class="split-title">一级客户</div>
+                <div class="field with-search"><label class="label required">一级客户编码</label><input class="input required-field" placeholder="请选择一级客户" /><span class="choose">选择</span></div>
+                <div class="field"><label class="label required">一级客户名称</label><input class="input required-field" placeholder="选择客户后自动带入" /></div>
+                <div class="field"><label class="label">一级客户类别</label><select class="select"><option>请选择一级客户类别</option><option>集团客户</option><option>省级客户</option><option>行业客户</option></select></div>
+                <div class="field"><label class="label">一级客户所属行业</label><select class="select"><option>请选择所属行业</option><option>党政</option><option>教医</option><option>互金</option><option>电物</option></select></div>
+                <div class="field"><label class="label">一级客户总部所在省</label><select class="select"><option>请选择总部所在省</option><option>北京</option><option>广东</option><option>浙江</option><option>上海</option></select></div>
+                <div class="field"><label class="label">一级客户渠道</label><select class="select"><option>请选择客户渠道</option><option>集团直签</option><option>省公司推荐</option><option>生态伙伴</option></select></div>
+                <div class="divider"></div><div class="split-title">二级客户</div>
+                <div class="field with-search"><label class="label">二级客户编码</label><input class="input" placeholder="请选择二级客户" /><span class="choose">选择</span></div>
+                <div class="field"><label class="label">二级客户名称</label><input class="input" placeholder="选择客户后自动带入" /></div>
+                <div class="field"><label class="label">二级客户所属行业</label><select class="select"><option>请选择所属行业</option><option>党政</option><option>教医</option><option>互金</option><option>电物</option></select></div>
+                <div class="divider"></div><div class="split-title">三级客户与签约主体</div>
+                <div class="field with-search"><label class="label">三级客户编码</label><input class="input" placeholder="请选择三级客户" /><span class="choose">选择</span></div>
+                <div class="field"><label class="label">三级客户名称</label><input class="input" placeholder="选择客户后自动带入" /></div>
+                <div class="field"><label class="label">三级客户所属行业</label><select class="select"><option>请选择所属行业</option><option>党政</option><option>教医</option><option>互金</option><option>电物</option></select></div>
+                <div class="field"><label class="label required">签约主体</label><select class="select required-field"><option value="">请选择签约主体</option><option>中移互联网有限公司</option><option>省公司主体</option><option>生态合作伙伴</option></select></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="contract">
+            <div class="section-head"><div class="bar"></div><div class="section-title">合同信息</div><div class="section-subtitle">合同编码可手工录入，也可通过解析表批量导入</div></div>
+            <div class="section-body">
+              <div class="grid cols-2 form-grid">
+                <div class="field"><label class="label">既往已失效合同编码</label><input class="input" placeholder="请输入既往已失效合同编码，多个用逗号分隔" /></div>
+                <div class="field"><label class="label">即将生效合同编码</label><input class="input" placeholder="请输入即将生效合同编码" /></div>
+                <div class="field"><label class="label">当前生效收入类合同编码</label><input class="input" placeholder="请输入当前生效收入类合同编码" /></div>
+                <div class="field"><label class="label">对应成本或分成合同编码</label><input class="input" placeholder="请输入对应成本或分成合同编码" /></div>
+                <div class="field full"><div class="warning">合同列表用于展示项目下合同明细。合同编码与收入信息中的收入编码建议保持关联，便于后续收入拆分、合同余量、续签评估等口径统一。</div></div>
+              </div>
+              <div style="height:14px"></div>
+              <div class="section-head" style="position:static;border:1px solid var(--line);border-radius:10px 10px 0 0;height:42px"><div class="section-title" style="font-size:14px">合同列表</div><div class="section-actions"><button class="link-btn" onclick="addContractRow()">+ 新增合同</button></div></div>
+              <div class="table-wrap" style="border-radius:0 0 10px 10px;border-top:0">
+                <table class="table" id="contractTable">
+                  <thead><tr><th>合同编码</th><th>合同名称</th><th>合同签约时间</th><th>合同开始时间</th><th>合同到期时间</th><th>合同金额（元，不含税）</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td><input class="input" placeholder="请输入合同编码"></td><td><input class="input" placeholder="请输入合同名称"></td><td><input type="date" class="input"></td><td><input type="date" class="input"></td><td><input type="date" class="input"></td><td><input class="input money" placeholder="0.00"></td><td><button class="link-btn" onclick="removeRow(this)">删除</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="height:14px"></div>
+              <div class="upload-box">
+                <div class="upload-main"><div class="upload-icon">⇪</div><div><div class="upload-title">合同解析表</div><div class="upload-desc">支持上传合同解析表，自动解析合同编码、合同周期、合同金额等字段</div></div></div>
+                <div><button class="btn ghost-blue" onclick="toast('已下载合同解析表模板')">下载模板</button> <button class="btn primary" onclick="toast('请选择本地文件上传')">上传</button></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="revenue">
+            <div class="section-head">
+              <div class="bar"></div>
+              <div class="section-title">收入信息</div>
+              <div class="section-subtitle">单位：元，不含税；一行对应一个收入编码和产品口径</div>
+              <div class="section-actions">
+                <span class="tag-mini" id="yearTag">2026年度</span>
+                <button class="link-btn" onclick="addRevenueRow()">+ 新增收入行</button>
+              </div>
+            </div>
+            <div class="section-body">
+              <div class="table-wrap revenue-scroll">
+                <table class="table revenue-master" id="revenueTable">
+                  <thead>
+                    <tr class="group-head">
+                      <th rowspan="2" class="seq">序号</th>
+                      <th colspan="5">产品信息</th>
+                      <th colspan="6">预估信息</th>
+                      <th colspan="12" class="month-group" id="halfGroup">2026月预估收入</th>
+                      <th colspan="12" class="book-group" id="fullGroup">2026财务列账收入</th>
+                      <th rowspan="2" class="op-col">操作</th>
+                    </tr>
+                    <tr class="sub-head">
+                      <th class="code">收入编码（区分产品）</th>
+                      <th class="product">VRM产品</th>
+                      <th class="history">V产品（历史）</th>
+                      <th class="history">R产品（历史）</th>
+                      <th class="metric">考核指标（历史）</th>
+                      <th class="money-col" id="lastYearIncome">2025列账收入金额</th>
+                      <th class="money-col" id="projectEstimate">2026项目预估收入</th>
+                      <th class="wide-money" id="activeContractEstimate">当前生效合同预估在2026列账收入</th>
+                      <th class="wide-money" id="renewEstimate">2026续签合同（含拟续签）预估在2026列账收入金额</th>
+                      <th class="money-col" id="capacity">2026拟申报能力（元）</th>
+                      <th class="money-col" id="doneEstimate">2026累计预估已完成收入</th>
+                      <th class="month-col">1月半月</th><th class="month-col">2月半月</th><th class="month-col">3月半月</th><th class="month-col">4月半月</th><th class="month-col">5月半月</th><th class="month-col">6月半月</th><th class="month-col">7月半月</th><th class="month-col">8月半月</th><th class="month-col">9月半月</th><th class="month-col">10月半月</th><th class="month-col">11月半月</th><th class="month-col">12月半月</th>
+                      <th class="month-col">1月全月</th><th class="month-col">2月全月</th><th class="month-col">3月全月</th><th class="month-col">4月全月</th><th class="month-col">5月全月</th><th class="month-col">6月全月</th><th class="month-col">7月全月</th><th class="month-col">8月全月</th><th class="month-col">9月全月</th><th class="month-col">10月全月</th><th class="month-col">11月全月</th><th class="month-col">12月全月</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-revenue-row>
+                      <td class="seq">1</td>
+                      <td><input class="input required-field" placeholder="收入编码"></td>
+                      <td><select class="select required-field"><option value="">请选择VRM产品</option><option>5G行业消息（含阅信）</option><option>中间号</option><option>移动IM公有云版</option></select></td>
+                      <td><input class="input" placeholder="V产品"></td>
+                      <td><input class="input" placeholder="R产品"></td>
+                      <td><input class="input" placeholder="考核指标"></td>
+                      <td><input class="input money" placeholder="0.00"></td>
+                      <td><input class="input money required-field" placeholder="0.00"></td>
+                      <td><input class="input money" placeholder="0.00"></td>
+                      <td><input class="input money" placeholder="0.00"></td>
+                      <td><input class="input money" placeholder="0.00"></td>
+                      <td><input class="input money" placeholder="0.00"></td>
+                      <td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td>
+                      <td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td><td><input class="input money" placeholder="0.00"></td>
+                      <td class="op-col"><button class="link-btn" onclick="removeRow(this)">删除</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+      <footer class="footer"><div class="status">已实时保存</div><button class="btn">取消</button><button class="btn ghost-blue" onclick="toast('项目草稿已保存')">存为草稿</button><button class="btn primary" onclick="toast('保存校验：请先补充必填字段')">保存</button></footer>
+    </section>
+    <div class="toast" id="toast"></div>
+  </div>
+  <script>
+    const content = document.getElementById('content');
+    const steps = Array.from(document.querySelectorAll('.step'));
+    steps.forEach(step=>step.addEventListener('click',()=>{
+      const target=document.getElementById(step.dataset.target); if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+    }));
+    content.addEventListener('scroll',()=>{
+      let current='basic';
+      document.querySelectorAll('.section').forEach(sec=>{ if(sec.getBoundingClientRect().top < 120) current=sec.id; });
+      steps.forEach(s=>s.classList.toggle('active',s.dataset.target===current));
+    });
+    document.querySelectorAll('.pill-radio').forEach(p=>p.addEventListener('click',()=>{const row=p.parentElement;row.querySelectorAll('.pill-radio').forEach(x=>x.classList.remove('active'));p.classList.add('active')}));
+    const density=document.getElementById('density');
+    density.querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{
+      density.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+      const cols=btn.dataset.cols; document.querySelectorAll('.form-grid').forEach(g=>{g.classList.remove('cols-1','cols-2','cols-3','cols-4');g.classList.add('cols-'+cols)});
+    }));
+    function toggleWide(){document.getElementById('drawer').classList.toggle('tip-wide')}
+    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2200)}
+    function removeRow(btn){const tr=btn.closest('tr'); const tbody=tr.parentElement; if(tbody.children.length>1){const isRevenue=!!tr.closest('#revenueTable'); tr.remove(); if(isRevenue) updateRevenueIndexes(); toast('已删除该行')}else{toast('至少保留一行数据')}}
+    function addContractRow(){const tb=document.querySelector('#contractTable tbody'); const tr=tb.rows[0].cloneNode(true); tr.querySelectorAll('input').forEach(i=>i.value=''); tb.appendChild(tr); toast('已新增合同行')}
+    function addRevenueRow(){const tb=document.querySelector('#revenueTable tbody'); const tr=tb.rows[0].cloneNode(true); tr.querySelectorAll('input').forEach(i=>i.value=''); tr.querySelectorAll('select').forEach(s=>s.selectedIndex=0); tb.appendChild(tr); updateRevenueIndexes(); toast('已新增收入行')}
+    function updateRevenueIndexes(){const rows=[...document.querySelectorAll('#revenueTable tbody tr')]; rows.forEach((tr,i)=>{const seq=tr.querySelector('.seq'); if(seq) seq.textContent=i+1}); const c=document.getElementById('revRowCount'); if(c) c.innerHTML=rows.length+'<span class="s">行</span>'}
+    function showMonthDetail(btn){const tr=btn.closest('tr'); const idx=[...tr.parentElement.children].indexOf(tr)+1; const code=tr.querySelector('input')?.value || '未填写'; document.querySelector('.month-panel-desc').textContent='当前收入行：第 '+idx+' 行；收入编码'+code; document.getElementById('monthDetailPanel').scrollIntoView({behavior:'smooth',block:'nearest'}); toast('已切换到第 '+idx+' 行月度明细')}
+    function switchRevenueYear(year){document.getElementById('yearTag').textContent=year+'年度'; refreshYears(Number(year)); toast('已切换到 '+year+' 年度')}
+    function setText(id,text){const el=document.getElementById(id); if(el) el.textContent=text}
+    function refreshYears(year){const y=year||new Date().getFullYear(); const last=y-1; setText('yearTag',y+'年度'); const sel=document.getElementById('revenueYearSelect'); if(sel && [...sel.options].some(o=>o.value==String(y)||o.text==String(y))) sel.value=String(y); setText('lastYearIncome',last+'列账收入金额'); setText('projectEstimate',y+'项目预估收入'); setText('activeContractEstimate','当前生效合同预估在'+y+'列账收入'); setText('renewEstimate',y+'续签合同（含拟续签）预估在'+y+'列账收入金额'); setText('capacity',y+'拟申报能力（元）'); setText('doneEstimate',y+'累计预估已完成收入'); setText('projectEstimateCardTitle',y+'项目预估收入'); setText('activeContractCardTitle','当前生效合同预估列账'); setText('doneEstimateCardTitle',y+'累计预估已完成收入'); setText('halfGroup',y+'月预估收入'); setText('fullGroup',y+'财务列账收入')}
+    refreshYears();
+    updateRevenueIndexes();
+    document.addEventListener('input',()=>{const empty=[...document.querySelectorAll('.required-field')].filter(i=>!i.value).length; document.getElementById('missingCount').textContent=empty+' 项必填未填'});
+  </script>
+</body>
+</html>
